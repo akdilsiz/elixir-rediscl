@@ -4,15 +4,11 @@ elixir:
   - 1.6.0
 otp_release:
   - 21.0
-matrix:
-  include:
-    - elixir: 1.5.0
-    - otp_release: 20.1
 sudo: required
 install:
   - mix local.hex --force
   - mix local.rebar --force
   - mix deps.get
-  - MIX_ENV=test mix deps.compile
+  - MIX_ENV=test mix do deps.compile, test
 script:
-  - mix do test, coveralls.travis
+  - mix coveralls.travis
