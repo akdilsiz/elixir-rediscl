@@ -16,6 +16,7 @@
 
   "skip_files": [
     "lib/rediscl/work.ex",
-    "lib/rediscl/superv.ex"
+    "lib/rediscl/superv.ex",
+    "lib/mix"
   ]
 }

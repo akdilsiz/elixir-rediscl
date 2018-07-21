@@ -1,12 +1,13 @@
-# Rediscl
+# Elixir Redis Client
 
 Minimal Redis client
+[![Build Status](https://travis-ci.com/akdilsiz/elixir-rediscl.svg?branch=master)](https://travis-ci.com/akdilsiz/elixir-rediscl)
+[![Coverage Status](https://coveralls.io/repos/github/akdilsiz/elixir-rediscl/badge.svg?branch=master)](https://coveralls.io/github/akdilsiz/elixir-rediscl?branch=master)
 
 **TODO: Complete docs**
 
 ## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+[available in Hex](https://hex.pm/packages/rediscl), the package can be installed
 by adding `rediscl` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -17,7 +18,40 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/rediscl](https://hexdocs.pm/rediscl).
+## Documentation
+[available HexDocs](https://hexdocs.pm/rediscl).
 
+## Configuration
+
+```elixir
+config :rediscl,
+    host: "127.0.0.1",
+    port: 6379,
+    database: 0,
+    pool: 15,
+    timeout: 15_000
+```
+
+
+## Use rediscl for Mix.Task
+```elixir
+import Mix.Rediscl
+alias Rediscl
+
+def run(_) do
+    ### Your codes
+    {:ok, _app} = ensure_started(:rediscl, [])
+
+    Rediscl.Query.set("key:1", "value1")
+    ### Your codes
+end
+
+```
+
+## Contribution
+
+All contributions are welcomed as long as you follow the conventions of *Elixir* language.
+
+## License
+
+MIT
