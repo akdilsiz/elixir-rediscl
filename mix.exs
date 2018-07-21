@@ -29,6 +29,7 @@ defmodule Rediscl.MixProject do
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["Abdulkadir DILSIZ"],
       licenses: ["MIT"],
+      description: "A minimal redis client for elixir",
       links:  %{"GitHub" => "https://github.com/akdilsiz/elixir-rediscl"}
     ]
   end
