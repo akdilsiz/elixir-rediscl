@@ -40,7 +40,7 @@ alias Rediscl
 
 def run(_) do
     ### Your codes
-    {:ok, _app} = ensure_started(:rediscl)
+    {:ok, _app} = ensure_started(:rediscl, [])
 
     Rediscl.Query.set("key:1", "value1")
     ### Your codes
