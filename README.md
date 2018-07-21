@@ -1,7 +1,7 @@
 # Elixir Redis Client
 
 Minimal Redis client
-
+[![Build Status](https://travis-ci.com/akdilsiz/elixir-rediscl.svg?branch=master)](https://travis-ci.com/akdilsiz/elixir-rediscl)
 **TODO: Complete docs**
 
 ## Installation

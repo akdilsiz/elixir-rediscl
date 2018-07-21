@@ -4,6 +4,7 @@ elixir:
   - 1.6.0
 otp_release:
   - 20.0
+services: redis
 sudo: required
 install:
   - mix local.hex --force
