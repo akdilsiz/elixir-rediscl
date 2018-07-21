@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Cleardb do
+defmodule Mix.Tasks.Clearrediscldb do
 	@moduledoc """
 		Clear keys on tests db
 	"""
@@ -15,11 +15,11 @@ defmodule Mix.Tasks.Cleardb do
 		Logger.configure(level: :info)
 
     Logger.configure_backend(:console,
-                              format: "\n$time $metadata[$level] $levelpad$message\n")
+                              format: "$time $metadata[$level] $levelpad$message\n")
 
     Logger.info "== Started Cleardb"
 
-		{:ok, _app} = ensure_started(Rediscl, [])
+		{:ok, _app} = ensure_started(:rediscl, [])
 
 		{:ok, keys} = Rediscl.Query.command("KEYS", "*")
 
