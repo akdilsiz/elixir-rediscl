@@ -7,7 +7,7 @@ Minimal Redis client
 **TODO: Complete docs**
 
 ## Installation
-[available in Hex](https://hex.pm/docs/publish), the package can be installed
+[available in Hex](https://hex.pm/packages/rediscl), the package can be installed
 by adding `rediscl` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -19,7 +19,7 @@ end
 ```
 
 ## Documentation
-[available HexDocs](https://hexdocs.pm).
+[available HexDocs](https://hexdocs.pm/rediscl).
 
 ## Configuration
 
