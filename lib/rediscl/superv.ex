@@ -13,4 +13,8 @@ defmodule Rediscl.Superv do
 
 		supervise(children, [strategy: :one_for_one])
 	end
+	
+	def stop(pid, timeout \\ 5000) do
+		Supervisor.stop(pid, :normal, timeout)
+	end
 end
