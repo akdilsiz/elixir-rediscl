@@ -88,6 +88,12 @@ defmodule Rediscl.Query do
   def lrem(key, count, value),
     do: query("LREM", key, [count, value])
 
+  @doc """
+    Pipe queries  
+  """
+  def pipe(queries) when is_list(queries), 
+    do: Work.query_pipe(queries) |> parse_response
+
   @doc false
   defp query(method, key, values) when is_list(values),
     do: Work.query([method, key] ++ values) |> parse_response

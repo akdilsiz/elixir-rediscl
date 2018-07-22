@@ -158,4 +158,10 @@ defmodule Rediscl.QueryTest do
 
   	assert {:ok, ["value2", "value1"]} = lrange
   end
+
+  test "pipe/1 with given queries" do
+    {:ok, pipe} = Query.pipe([["SET", "a", 1], ["GET", "a"]])
+
+    assert ["OK", "1"] == pipe
+  end
 end
