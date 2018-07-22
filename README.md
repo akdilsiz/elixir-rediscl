@@ -36,6 +36,24 @@ config :rediscl,
     timeout: 15_000
 ```
 
+## Examples
+```elixir
+defmodule Example do
+    alias Rediscl
+
+    def example_one do
+        {:ok, _} = Rediscl.Query.set("key:1", "value1")
+    end
+
+    def example_two do
+        {:ok, value} = Rediscl.Query.get("key:1")
+    end
+
+    def example_three do
+        {:ok, list_values} = Rediscl.Query.mget(["key:1", "key:2", "key:3"])
+    end
+end
+```
 
 ## Use rediscl for Mix.Task
 ```elixir
