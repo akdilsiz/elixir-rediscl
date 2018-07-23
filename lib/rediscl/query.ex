@@ -123,6 +123,8 @@ defmodule Rediscl.Query do
     case response do
       "ERR " <> error ->
         {:error, error}
+      "NOAUTH Authentication required." ->
+        {:error, :authentication_error}
       response ->
         {:ok, response}
     end
