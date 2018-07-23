@@ -27,18 +27,18 @@ defmodule Rediscl.Query.Pipe do
 		build(pipes)
 	end
 	
-	@doc false
+	@doc ""
 	def build(pipes) when is_list(pipes) do
 		Enum.into(pipes, %{})
 		|> Enum.map(&(build(&1)))
 	end
 
-	@doc false
+	@doc ""
 	def build({type, expr}) when type in @pipes do
 		build(type, expr)
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :set do
 		unless Enum.count(expr) == 2 and Enum.any?(expr, &typeof!(&1)),
 			do: raise ArgumentError, "given parameters not valid"
@@ -46,12 +46,12 @@ defmodule Rediscl.Query.Pipe do
 		set(Enum.at(expr, 0), Enum.at(expr, 1))
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :get and is_binary(expr) do
 		get(expr)
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :mset do
 		unless Enum.count(expr) >= 2 and Enum.any?(expr, &typeof!(&1)),
 			do: raise ArgumentError, "given parameters must be greater than 2 " <>
@@ -60,7 +60,7 @@ defmodule Rediscl.Query.Pipe do
 		mset(expr)
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :mget do
 		unless Enum.count(expr) >= 2 and Enum.any?(expr, &typeof!(&1)),
 			do: raise ArgumentError, "given parameters must be greater than or equal to 1" <>
@@ -69,7 +69,7 @@ defmodule Rediscl.Query.Pipe do
 		mget(expr)
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :del and is_list(expr) do
 		unless Enum.any?(expr, &typeof!(&1)),
 			do: raise ArgumentError, "given parameters not valid"
@@ -77,7 +77,7 @@ defmodule Rediscl.Query.Pipe do
 		del(expr)
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :lpush and is_list(expr) do
 		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
 			is_list(Enum.at(expr, 1)) and 
@@ -88,7 +88,7 @@ defmodule Rediscl.Query.Pipe do
  		lpush(Enum.at(expr, 0), Enum.at(expr, 1))
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :rpush and is_list(expr) do
 		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
 			is_list(Enum.at(expr, 1)) and 
@@ -99,7 +99,7 @@ defmodule Rediscl.Query.Pipe do
  		rpush(Enum.at(expr, 0), Enum.at(expr, 1))
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :lset do
 		unless Enum.count(expr) === 3 and typeof!(Enum.at(expr, 0)) and
 			is_integer(Enum.at(expr, 1)) and typeof!(Enum.at(expr, 2)),
@@ -109,7 +109,7 @@ defmodule Rediscl.Query.Pipe do
  		lset(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :lrange do
 		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
 			is_integer(Enum.at(expr, 1)) and is_integer(String.to_integer(Enum.at(expr, 2))),
@@ -119,7 +119,7 @@ defmodule Rediscl.Query.Pipe do
  		lrange(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
 	end
 
-	@doc false
+	@doc ""
 	def build(type, expr) when type == :lrem do
 		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
 			is_integer(Enum.at(expr, 1)) and typeof!(Enum.at(expr, 2)),
@@ -129,7 +129,7 @@ defmodule Rediscl.Query.Pipe do
  		lrem(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
 	end
 
-	@doc false
+	@doc ""
 	def build(_, expr) when not is_binary(expr), 
 		do: raise ArgumentError, "given parameter not valid"
 

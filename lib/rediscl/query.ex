@@ -130,7 +130,7 @@ defmodule Rediscl.Query do
     end
   end
 
-  @doc false
+  @doc ""
   @spec run_pipe(List.t) :: {:ok | :error, __MODULE__.Pipe.t}
   def run_pipe(pipes) do
     {:ok, results} = __MODULE__.pipe(pipes)
