@@ -4,7 +4,7 @@ defmodule Rediscl.MixProject do
   def project do
     [
       app: :rediscl,
-      version: "0.1.5",
+      version: "0.1.6",
       elixir: "~> 1.6",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -26,10 +26,10 @@ defmodule Rediscl.MixProject do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      files: ["lib", "mix.exs", "README*", ".formatter.exs", "LICENSE*"],
       maintainers: ["Abdulkadir DILSIZ"],
       licenses: ["MIT"],
-      description: "A minimal redis client for elixir",
+      description: "A minimal redis client with connection pooling (using exredis and poolboy)",
       links:  %{"GitHub" => "https://github.com/akdilsiz/elixir-rediscl"}
     ]
   end
