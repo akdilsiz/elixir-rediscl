@@ -1,6 +1,6 @@
 # Elixir Redis Client
 
-Redis client with connection pooling
+A minimal redis client with connection pooling (using exredis and poolboy)
 
 [![Build Status](https://travis-ci.org/akdilsiz/elixir-rediscl.svg?branch=master)](https://travis-ci.org/akdilsiz/elixir-rediscl)
 [![Coverage Status](https://coveralls.io/repos/github/akdilsiz/elixir-rediscl/badge.svg?branch=master)](https://coveralls.io/github/akdilsiz/elixir-rediscl?branch=master)
@@ -8,7 +8,11 @@ Redis client with connection pooling
 [![Hex.pm](https://img.shields.io/hexpm/dt/rediscl.svg)](https://hex.pm/packages/rediscl)
 
 **TODO: Complete docs**
-**TODO: Pipe query builder**
+
+## Features
+- Connection pooling
+- Pipe query builder (basic commands)
+- Basic Query commands
 
 ## Installation
 [available in Hex](https://hex.pm/packages/rediscl), the package can be installed
@@ -51,6 +55,36 @@ defmodule Example do
 
     def example_three do
         {:ok, list_values} = Rediscl.Query.mget(["key:1", "key:2", "key:3"])
+    end
+end
+
+defmodule ExamplePipeBuilder do
+    import Rediscl.Query.Pipe
+    alias Rediscl.Query
+
+    def example do
+        query = begin set: ["key:10", "1"],
+                      mset: ["key:11", "value2", "key:12", "value3"],
+                      lpush: ["key:13", ["-1", "-2", "-3"]],
+                      rpush: ["key:14", ["1", "2", "3"]],
+                      lrange: ["key:13", 0, "-1"],
+                      lrem: ["key:13", 1, "-1"]
+
+        {:ok, results} = Query.run_pipe(query)
+        ## Results
+        #    %Rediscl.Query.Pipe{
+        #      del: nil,
+        #      get: nil,
+        #      lpush: "3",
+        #      lrange: ["-3", "-2", "-1"],
+        #      lrem: "1",
+        #      lset: nil,
+        #      mget: nil,
+        #      mset: "OK",
+        #      rpush: "3",
+        #      set: "OK"
+        #    }
+        ##
     end
 end
 ```

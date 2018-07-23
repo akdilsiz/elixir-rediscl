@@ -2,7 +2,8 @@
   "custom_stop_words": [
     "defmacro",
     "using",
-    "setup"
+    "setup",
+    "defp"
   ],
 
   "coverage_options": {
@@ -17,6 +18,7 @@
   "skip_files": [
     "lib/rediscl/work.ex",
     "lib/rediscl/superv.ex",
-    "lib/mix"
+    "lib/mix",
+    "lib/util"
   ]
 }

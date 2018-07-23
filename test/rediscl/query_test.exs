@@ -3,13 +3,34 @@ defmodule Rediscl.QueryTest do
   doctest Rediscl
 
   alias Rediscl.Query
+  import Rediscl.Query.Pipe
 
   setup do
-  	{:ok, ["0", keys]} = Query.command("SCAN", "0")
+  	{:ok, keys} = Query.command("KEYS", "*")
   	
   	Query.del(keys)
 
   	:ok
+  end
+
+  test "run_pipe/1" do
+    query = begin set: ["key:10", "1"],
+                  mset: ["key:11", "value2", "key:12", "value3"],
+                  lpush: ["key:13", ["-1", "-2", "-3"]],
+                  rpush: ["key:14", ["1", "2", "3"]],
+                  lrange: ["key:13", 0, "-1"],
+                  lrem: ["key:13", 1, "-1"]
+
+    {:ok, results} = Query.run_pipe(query)
+
+    assert results.set == "OK"
+    assert results.mset == "OK"
+    assert String.to_integer(results.lpush) >= 3
+    assert String.to_integer(results.rpush) >= 3
+    assert Enum.at(results.lrange, 0) == "-3"
+    assert Enum.at(results.lrange, 1) == "-2"
+    assert Enum.at(results.lrange, 2) == "-1"
+    assert results.lrem == "1"
   end
 
   test "command/1 test" do

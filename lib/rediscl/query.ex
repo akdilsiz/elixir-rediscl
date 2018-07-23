@@ -127,4 +127,45 @@ defmodule Rediscl.Query do
         {:ok, response}
     end
   end
+
+  @doc false
+  @spec run_pipe(List.t) :: {:ok | :error, __MODULE__.Pipe.t}
+  def run_pipe(pipes) do
+    {:ok, results} = __MODULE__.pipe(pipes)
+
+    {results, _} =
+      Enum.map_reduce(results, 0, fn (x, acc) -> 
+        pipe = Enum.at(pipes, acc)
+
+        type =
+          case List.first(pipe) do
+            "SET" ->
+              :set
+            "GET" ->
+              :get
+            "MSET" ->
+              :mset
+            "MGET" ->
+              :mget
+            "DEL" ->
+              :del
+            "LPUSH" ->
+              :lpush
+            "RPUSH" ->
+              :rpush
+            "LSET" ->
+              :lset
+            "LRANGE" ->
+              :lrange
+            "LREM" ->
+              :lrem
+          end
+
+        {{type, x}, acc + 1}
+      end)
+    
+    results = struct(__MODULE__.Pipe, results)
+
+    {:ok, results}
+  end
 end
