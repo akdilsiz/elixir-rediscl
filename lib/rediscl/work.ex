@@ -27,9 +27,9 @@ defmodule Rediscl.Work do
     conn = __MODULE__.ensure(conn)
     case command do
       :query ->
-        {:reply, Exredis.query(conn, params), %{conn: conn}}
+        {:reply, :eredis.q(conn, params), %{conn: conn}}
       :query_pipe ->
-      	{:reply, Exredis.query_pipe(conn, params), %{conn: conn}}
+      	{:reply, :eredis.qp(conn, params), %{conn: conn}}
     end
 	end
 
@@ -56,6 +56,6 @@ defmodule Rediscl.Work do
 	end
 
 	defp build_conn() do
-		Exredis.start_link(@host, @port, @database, @password, @reconnnect)
+		:eredis.start_link(to_charlist(@host), @port, @database, to_charlist(@password), @reconnnect)
 	end
 end

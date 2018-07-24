@@ -7,7 +7,9 @@ A minimal redis client with connection pooling (using exredis and poolboy)
 [![Hex.pm](https://img.shields.io/hexpm/v/rediscl.svg)](https://hex.pm/packages/rediscl)
 [![Hex.pm](https://img.shields.io/hexpm/dt/rediscl.svg)](https://hex.pm/packages/rediscl)
 
-**TODO: Complete docs**
+##TODO List
+- [ ] Completed docs 
+- [ ] All redis commands will be added.
 
 ## Features
 - Connection pooling

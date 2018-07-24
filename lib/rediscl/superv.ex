@@ -16,5 +16,7 @@ defmodule Rediscl.Superv do
 	
 	def stop(pid, timeout \\ 5000) do
 		Supervisor.stop(pid, :normal, timeout)
+
+		:ok
 	end
 end

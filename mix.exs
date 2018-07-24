@@ -4,7 +4,7 @@ defmodule Rediscl.MixProject do
   def project do
     [
       app: :rediscl,
-      version: "0.1.6",
+      version: "0.1.7",
       elixir: "~> 1.6",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -37,7 +37,7 @@ defmodule Rediscl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:exredis, ">= 0.2.4"},
+      {:eredis, "~> 1.1"},
       {:poolboy, "~> 1.5"},
       {:excoveralls, "~> 0.8", only: :test},
       {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},
