@@ -92,7 +92,7 @@ defmodule Rediscl.Query do
     Pipe queries  
   """
   def pipe(queries) when is_list(queries), 
-    do: Work.query_pipe(queries) |> parse_response
+    do: Work.query_pipe(queries) |> parse_response(:pipe)
 
   @doc false
   defp query(method, key, values) when is_list(values),
@@ -119,19 +119,26 @@ defmodule Rediscl.Query do
     do: Work.query([command]) |> parse_response
 
   @doc false
+  defp parse_response(response, :pipe) do
+    {:ok, Enum.map(response, &(elem(&1, 1)))}
+  end
+
+  @doc false
   defp parse_response(response) do
     case response do
-      "ERR " <> error ->
+      {:error, "ERR " <> error} ->
         {:error, error}
-      "NOAUTH Authentication required." ->
+      {:error, "NOAUTH Authentication required."} ->
         {:error, :authentication_error}
-      response ->
+      # {:error, error} ->
+        {:error, :no_authentication_password}
+      {:ok, response} ->
         {:ok, response}
     end
   end
 
   @doc ""
-  @spec run_pipe(List.t) :: {:ok | :error, __MODULE__.Pipe.t}
+  @spec run_pipe(List.t) :: {:ok, __MODULE__.Pipe.t}
   def run_pipe(pipes) do
     {:ok, results} = __MODULE__.pipe(pipes)
 
