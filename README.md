@@ -1,6 +1,6 @@
 # Elixir Redis Client
 
-A minimal redis client with connection pooling (using exredis and poolboy)
+A minimal redis client with connection pooling (using eredis and poolboy)
 
 [![Build Status](https://travis-ci.org/akdilsiz/elixir-rediscl.svg?branch=master)](https://travis-ci.org/akdilsiz/elixir-rediscl)
 [![Coverage Status](https://coveralls.io/repos/github/akdilsiz/elixir-rediscl/badge.svg?branch=master)](https://coveralls.io/github/akdilsiz/elixir-rediscl?branch=master)
