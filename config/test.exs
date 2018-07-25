@@ -4,7 +4,7 @@ config :logger, level: :warn
 
 config :rediscl,
 	host: "localhost",
-	port: 6380,
+	port: 6379,
 	password: "",
 	database: 0,
 	pool: 5,
