@@ -33,6 +33,29 @@ defmodule Rediscl.QueryTest do
     assert results.lrem == "1"
   end
 
+  test "run_pipe/1 other commands" do
+    query = begin set: ["key:10", 10],
+                  mset: ["key:11", "value2", "key:12", "value3"],
+                  append: ["key:11", "value2"],
+                  exists: "key:10",
+                  setex: ["setex:1", 100, "value"],
+                  setnx: ["key:14", "0"],
+                  setrange: ["key:13", 10, "value"],
+                  psetex: ["key:13", 1000, "-1"],
+                  getrange: ["key:13", 0, 4],
+                  get: "key:10",
+                  getset: ["key:10", 11],
+                  strlen: "key:13",
+                  incr: "key:10",
+                  incrby: ["key:10", 4],
+                  incrbyfloat: ["key:10", "1.1"],
+                  decr: "key:10",
+                  decrby: ["key:10", 1],
+                  msetnx: ["key:21", "value", "key:22", "value"]
+
+    {:ok, _results} = Query.run_pipe(query)
+  end
+
   test "command/1 test" do
   	command = Query.command("INFO")
 		
@@ -51,10 +74,40 @@ defmodule Rediscl.QueryTest do
   	assert {:error, "unknown command 'UNKNOWN'"} = command
   end
 
+  test "exists/1" do
+    {:ok, "OK"} = Query.set("exists", "1")
+
+    exists = Query.exists("exists")
+
+    assert {:ok, "1"} == exists
+  end
+
+  test "append/2 with given key and value" do
+    {:ok, "OK"} = Query.set("append", "Hello")
+    
+    {:ok, "11"} = Query.append("append", " World")
+  end
+
   test "set/2 query with given key and value" do
   	set = Query.set("test:1", 1)
 
   	assert {:ok, "OK"} = set
+  end
+
+  test "set_ex/3 with given key, seconds and value" do
+    {:ok, "OK"} = Query.set_ex("setex", 10, "value")
+  end
+
+  test "set_nx/2 with given key and value" do
+    {:ok, "1"} = Query.set_nx("setnx", "value")
+  end
+
+  test "set_range/3 with given key, offset and value" do
+    {:ok, "15"} = Query.set_range("setrange", 10, "value")
+  end
+
+  test "pset_ex/3 with given key, miliseconds and value" do
+    {:ok, "OK"} = Query.pset_ex("psetex", 1000, "value")
   end
 
   test "get query with given key" do
@@ -67,6 +120,58 @@ defmodule Rediscl.QueryTest do
   	assert {:ok, "2"} = get
   end
 
+  test "get_range/3 with given key, start and stop " do
+    {:ok, "OK"} = Query.set("get_range", "Hello World")
+
+    {:ok, "Hello"} = Query.get_range("get_range", 0, 4)
+  end
+
+  test "get_set/2 with given key and value" do
+    {:ok, "OK"} = Query.set("get_set", 1)
+
+    {:ok, "1"} = Query.get("get_set")
+
+    {:ok, "1"} = Query.get_set("get_set", 2)
+
+    {:ok, "2"} = Query.get("get_set")
+  end
+
+  test "strlen/1 with given key" do
+    {:ok, "OK"} = Query.set("strlen", "Hello")
+
+    {:ok, "5"} = Query.strlen("strlen")
+  end
+
+  test "incr/1 with given key" do
+    {:ok, "OK"} = Query.set("incr", 1)
+
+    {:ok, "2"} = Query.incr("incr")
+  end
+
+  test "incr_by/2 with given key and value" do
+    {:ok, "OK"} = Query.set("incr_by", 1)
+
+    {:ok, "6"} = Query.incr_by("incr_by", 5)    
+  end
+
+  test "incr_by_float/2 with given key and value" do
+    {:ok, "OK"} = Query.set("incr_by_float", "1.1")
+
+    {:ok, "1.2"} = Query.incr_by_float("incr_by_float", "0.1")
+  end
+
+  test "decr/1 with given key" do
+    {:ok, "OK"} = Query.set("decr", 1)
+
+    {:ok, "0"} = Query.decr("decr")
+  end
+
+  test "decr_by/2 with given key and decrement value" do
+    {:ok, "OK"} = Query.set("decr_by", 2)
+
+    {:ok, "1"} = Query.decr_by("decr_by", 1)
+  end
+
   test "mget/2 is list with given keys" do
   	{:ok, "OK"} = Query.set("test:3", "test3value")
   	{:ok, "OK"} = Query.set("test:4", "test4value")
@@ -76,14 +181,14 @@ defmodule Rediscl.QueryTest do
   	assert {:ok, ["test3value", "test4value"]} = mget
   end
 
-  test "mget/1 with given empty list" do
-  	assert [] = Query.mget("")
-  end
-
   test "mset/1 with given keys and values" do
   	mset = Query.mset(["test:5", "test5value", "test:6", "test6value"])
 
   	assert {:ok, "OK"} = mset
+  end
+
+  test "mset_nx/1 with given keys and values" do
+    {:ok, "1"} = Query.mset_nx(["msetnx:2", "value", "msetnx:3", "value"])
   end
 
   test "del/1 with given key" do

@@ -3,90 +3,139 @@ defmodule Rediscl.Query do
     Minimal redis command
   """
 	alias Rediscl.Work
+  alias Rediscl.Query.Api
 
   @doc """
     Run a command with key
   """
-  def command(command, key), do: query(command, key)
+  def command(command, key), do: query(Api.command(command, key))
 
 	@doc """
     Run a command
   """
-  def command(command), do: query(command)
+  def command(command), do: query(Api.command(command))
+
+  @doc """
+    Key is exists
+  """
+  def exists(key), do: query(Api.exists(key))
+
+  @doc ""
+  def append(key, value), do: query(Api.append(key, value))
 
   @doc """
     Get a key redis client
   """
-  def get(key), do: query("GET", key)
+  def get(key), do: query(Api.get(key))
+
+  @doc ""
+  def get_range(key, start, stop),
+    do: query(Api.get_range(key, start, stop))
+
+  @doc ""
+  def get_set(key, value), do: query(Api.get_set(key, value))
+
+  @doc ""
+  def strlen(key), do: query(Api.strlen(key))
+
+  @doc ""
+  def incr(key), do: query(Api.incr(key))
+
+  @doc ""
+  def incr_by_float(key, value), do: query(Api.incr_by_float(key, value))
+
+  @doc ""
+  def incr_by(key, value), do: query(Api.incr_by(key, value))
+
+  @doc ""
+  def decr(key), do: query(Api.decr(key))
+
+  @doc ""
+  def decr_by(key, decrement), do: query(Api.decr_by(key, decrement))
 
   @doc """
     Multiple get a value with given keys redis client
   """
-  def mget(keys) when is_list(keys), do: query("MGET", keys)
-
-  @doc """
-    Multiple get a value with given keys redis client when keys is nil
-  """
-  def mget(_), do: []
+  def mget(keys) when is_list(keys), do: query(Api.mget(keys))
 
   @doc """ 
     Set a key, single value redis client
   """
-  def set(key, value), do: query("SET", key, value)
+  def set(key, value), do: query(Api.set(key, value))
+
+  @doc ""
+  def set_ex(key, second, value), 
+    do: query(Api.set_ex(key, second, value))
+
+  @doc ""
+  def set_nx(key, value), do: query(Api.set_nx(key, value))
+
+  @doc ""
+  def set_range(key, offset, value), 
+    do: query(Api.set_range(key, offset, value))
+
+  @doc ""
+  def pset_ex(key, milisecond, value),
+    do: query(Api.pset_ex(key, milisecond, value))
 
   @doc """
     Multiple set a keys and values redis clients
   """
-  def mset(key_and_values), do: query("MSET", key_and_values)
+  def mset(keys_and_values) when is_list(keys_and_values), 
+    do: query(Api.mset(keys_and_values))
 
-  def del(keys) when is_list(keys), do: query("DEL", keys)
+  @doc ""
+  def mset_nx(keys_and_values) when is_list(keys_and_values),
+    do: query(Api.mset_nx(keys_and_values))
+
+  def del(keys) when is_list(keys), do: query(Api.del(keys))
 
   @doc """
     Del a key with given key name
   """
-  def del(key), do: query("DEL", key)
+  def del(key), do: query(Api.del([key]))
 
   @doc """
     Left push for list with key and values when first param is key
   """
   def lpush(values, key) when is_list(values),
-    do: query("LPUSH", key, values)
+    do: query(Api.lpush(key, values))
 
   @doc """
     Left push for list with key and values
   """
   def lpush(key, value),
-    do: query("LPUSH", key, value)
+    do: query(Api.lpush(key, List.flatten([value])))
 
   @doc """
     Right push for list with key and values when first param is key
   """
   def rpush(values, key) when is_list(values),
-    do: query("RPUSH", key, values)
+    do: query(Api.rpush(key, values))
 
   @doc """
    Right push for list with key and values
   """
   def rpush(key, value),
-    do: query("RPUSH", key, value)
+    do: query(Api.rpush(key, List.flatten([value])))
 
   @doc """
     Get for list with given key and start indx and stop index
   """
   def lrange(key, start, stop),
-    do: query("LRANGE", key, [start, stop])
+    do: query(Api.lrange(key, start, stop))
 
   @doc """
     Set from list with given key and index and value
   """
   def lset(key, index, value),
-    do: query("LSET", key, index, value)
+    do: query(Api.lset(key, index, value))
 
   @doc """
     Remove from list element with given key and element count
   """
   def lrem(key, count, value),
-    do: query("LREM", key, [count, value])
+    do: query(Api.lrem(key, count, value))
 
   @doc """
     Pipe queries  
@@ -94,29 +143,30 @@ defmodule Rediscl.Query do
   def pipe(queries) when is_list(queries), 
     do: Work.query_pipe(queries) |> parse_response(:pipe)
 
-  @doc false
-  defp query(method, key, values) when is_list(values),
-    do: Work.query([method, key] ++ values) |> parse_response
+  # @doc false
+  # defp query(method, key, values) when is_list(values),
+  #   do: Work.query([method, key] ++ values) |> parse_response
+
+  # @doc false
+  # defp query(method, key, value),
+  #   do: Work.query([method, key, value]) |> parse_response
+
+  # @doc false
+  # defp query(method, key, index, value),
+  #   do: Work.query([method, key, index, value]) |> parse_response
+
+  # @doc false
+  # defp query(method, key) when is_list(key),
+  #   do: Work.query([method] ++ key) |> parse_response
+
+  # @doc false
+  # defp query(method, key),
+  #   do: Work.query([method, key]) |> parse_response
 
   @doc false
-  defp query(method, key, value),
-    do: Work.query([method, key, value]) |> parse_response
-
-  @doc false
-  defp query(method, key, index, value),
-    do: Work.query([method, key, index, value]) |> parse_response
-
-  @doc false
-  defp query(method, key) when is_list(key),
-    do: Work.query([method] ++ key) |> parse_response
-
-  @doc false
-  defp query(method, key),
-    do: Work.query([method, key]) |> parse_response
-
-  @doc false
-  defp query(command),
-    do: Work.query([command]) |> parse_response
+  @spec query(List.t) :: {:ok, any}
+  defp query(command) when is_list(command),
+    do: Work.query(command) |> parse_response
 
   @doc false
   defp parse_response(response, :pipe) do
@@ -146,34 +196,11 @@ defmodule Rediscl.Query do
       Enum.map_reduce(results, 0, fn (x, acc) -> 
         pipe = Enum.at(pipes, acc)
 
-        type =
-          case List.first(pipe) do
-            "SET" ->
-              :set
-            "GET" ->
-              :get
-            "MSET" ->
-              :mset
-            "MGET" ->
-              :mget
-            "DEL" ->
-              :del
-            "LPUSH" ->
-              :lpush
-            "RPUSH" ->
-              :rpush
-            "LSET" ->
-              :lset
-            "LRANGE" ->
-              :lrange
-            "LREM" ->
-              :lrem
-          end
-
-        {{type, x}, acc + 1}
+        {{String.to_atom(String.downcase(List.first(pipe))), x}, 
+          acc + 1}
       end)
     
-    results = struct(__MODULE__.Pipe, results)
+    results = struct(__MODULE__.Pipe.Result, results)
 
     {:ok, results}
   end

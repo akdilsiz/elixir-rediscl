@@ -3,23 +3,14 @@ defmodule Rediscl.Query.Pipe do
 		Pipe query builder
 	"""
 	defstruct [:set, :get, :mset, :mget, :del, :lpush, :rpush, :lrange,
-						:lrem, :lset]
+						:lrem, :lset, :append, :exists, :setex, :setnx, :setrange, :psetex,
+						:getrange, :getset, :strlen, :incr, :incrby, :incrbyfloat,
+						:msetnx, :decr, :decrby]
 
 	@pipes [:set, :get, :mset, :mget, :del, :lpush, :rpush, :lrange,
-						:lrem, :lset]
-
-	@type t :: %__MODULE__{
-		set: String.t,
-		get: String.t,
-		mset: String.t,
-		mget: List.t,
-		del: String.t,
-		lpush: String.t,
-		rpush: String.t,
-		lrange: String.t,
-		lrem: String.t,
-		lset: String.t
-	}
+						:lrem, :lset, :append, :exists, :setex, :setnx, :setrange, :psetex,
+						:getrange, :getset, :strlen, :incr, :incrby, :incrbyfloat,
+						:msetnx, :decr, :decrby]
 
 	import Rediscl.Query.Api
 	
@@ -39,11 +30,62 @@ defmodule Rediscl.Query.Pipe do
 	end
 
 	@doc ""
-	def build(type, expr) when type == :set do
+	def build(type, expr) when type == :exists and is_binary(expr) do
+		exists(expr)
+	end
+
+	@doc ""
+	def build(type, expr) when type == :append and is_list(expr) do
 		unless Enum.count(expr) == 2 and Enum.any?(expr, &typeof!(&1)),
-			do: raise ArgumentError, "given parameters not valid"
+			do: raise ArgumentError, "append given parameters not valid"
+
+		append(Enum.at(expr, 0), Enum.at(expr, 0))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :set and is_list(expr) do
+		unless Enum.count(expr) == 2 and Enum.any?(expr, &typeof!(&1)),
+			do: raise ArgumentError, "set given parameters not valid"
 
 		set(Enum.at(expr, 0), Enum.at(expr, 1))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :setex and is_list(expr) do
+		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
+			is_integer(Enum.at(expr, 1)) and 
+			(typeof!(Enum.at(expr, 2)) or is_integer(Enum.at(expr, 2))),
+			do: raise ArgumentError, "setex given parameters not valid"
+
+		set_ex(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :setnx and is_list(expr) do
+		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
+			(is_integer(Enum.at(expr, 1)) or typeof!(Enum.at(expr, 1))),
+			do: raise ArgumentError, "setnx given parameters not valid"
+
+		set_nx(Enum.at(expr, 0), Enum.at(expr, 1))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :setrange and is_list(expr) do
+		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
+			is_integer(Enum.at(expr, 1)) and typeof!(Enum.at(expr, 2)),
+			do: raise ArgumentError, "setrange given parameters not valid"
+
+		set_range(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :psetex and is_list(expr) do
+		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
+			is_integer(Enum.at(expr, 1)) and 
+			(typeof!(Enum.at(expr, 2)) or is_integer(Enum.at(expr, 2))),
+			do: raise ArgumentError, "psetex given parameters not valid"
+
+		pset_ex(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
 	end
 
 	@doc ""
@@ -52,27 +94,91 @@ defmodule Rediscl.Query.Pipe do
 	end
 
 	@doc ""
-	def build(type, expr) when type == :mset do
+	def build(type, expr) when type == :getrange and is_list(expr) do
+		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
+			Enum.any?(expr, &is_integer/1),
+			do: raise ArgumentError, "getrange given parameters not valid"
+
+		get_range(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :getset and is_list(expr) do
+		unless Enum.count(expr) == 2 and Enum.any?(expr, &typeof!/1),
+			do: raise ArgumentError, "getset given parameters not valid"
+
+		get_set(Enum.at(expr, 0), Enum.at(expr, 1))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :strlen and is_binary(expr) do
+		strlen(expr)
+	end
+
+	@doc ""
+	def build(type, expr) when type == :incr and is_binary(expr) do
+		incr(expr)
+	end
+
+	@doc ""
+	def build(type, expr) when type == :incrby and is_list(expr) do
+		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
+			is_integer(Enum.at(expr, 1)),
+			do: raise ArgumentError, "incrby given parameters not valid"
+
+		incr_by(Enum.at(expr, 0), Enum.at(expr, 1))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :incrbyfloat and is_list(expr) do
+		unless Enum.count(expr) == 2 and Enum.any?(expr, &typeof!/1),
+			do: raise ArgumentError, "incrbyfloat given parameters not valid"
+
+		incr_by_float(Enum.at(expr, 0), Enum.at(expr, 1))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :decr and is_binary(expr) do
+		decr(expr)
+	end
+
+	@doc ""
+	def build(type, expr) when type == :decrby and is_list(expr) do
+		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
+			is_integer(Enum.at(expr, 1)),
+			do: raise ArgumentError, "decrby given parameters not valid"
+
+		decr_by(Enum.at(expr, 0), Enum.at(expr, 1))
+	end
+
+	@doc ""
+	def build(type, expr) when type == :mset and is_list(expr) do
 		unless Enum.count(expr) >= 2 and Enum.any?(expr, &typeof!(&1)),
-			do: raise ArgumentError, "given parameters must be greater than 2 " <>
+			do: raise ArgumentError, "mset given parameters must be greater than 2 " <>
 			 	"or given parameters not valid"
 		
 		mset(expr)
 	end
 
 	@doc ""
+	def build(type, expr) when type == :msetnx and is_list(expr) do
+		mset_nx(expr)
+	end
+
+	@doc ""
 	def build(type, expr) when type == :mget do
 		unless Enum.count(expr) >= 2 and Enum.any?(expr, &typeof!(&1)),
-			do: raise ArgumentError, "given parameters must be greater than or equal to 1" <>
+			do: raise ArgumentError, "mget given parameters must be greater than or equal to 1" <>
 			 	" or given parameters not valid"
 
 		mget(expr)
 	end
 
 	@doc ""
-	def build(type, expr) when type == :del and is_list(expr) do
+	def build(type, expr) when type == :del and 
+		is_list(expr) or is_binary(expr) do
 		unless Enum.any?(expr, &typeof!(&1)),
-			do: raise ArgumentError, "given parameters not valid"
+			do: raise ArgumentError, "del given parameters not valid"
 
 		del(expr)
 	end
@@ -82,7 +188,7 @@ defmodule Rediscl.Query.Pipe do
 		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
 			is_list(Enum.at(expr, 1)) and 
 			Enum.any?(Enum.at(expr, 1), &typeof!(&1)),
-			do: raise ArgumentError, "given parameters must be greater than 2 or " <>
+			do: raise ArgumentError, "lpush given parameters must be greater than 2 or " <>
 				"values not list or values not valid type"
 
  		lpush(Enum.at(expr, 0), Enum.at(expr, 1))
@@ -93,7 +199,7 @@ defmodule Rediscl.Query.Pipe do
 		unless Enum.count(expr) == 2 and typeof!(Enum.at(expr, 0)) and
 			is_list(Enum.at(expr, 1)) and 
 			Enum.any?(Enum.at(expr, 1), &typeof!(&1)),
-			do: raise ArgumentError, "given parameters must be greater than 2 or " <>
+			do: raise ArgumentError, "rpush given parameters must be greater than 2 or " <>
 				"values not list or values not valid type"
 
  		rpush(Enum.at(expr, 0), Enum.at(expr, 1))
@@ -103,7 +209,7 @@ defmodule Rediscl.Query.Pipe do
 	def build(type, expr) when type == :lset do
 		unless Enum.count(expr) === 3 and typeof!(Enum.at(expr, 0)) and
 			is_integer(Enum.at(expr, 1)) and typeof!(Enum.at(expr, 2)),
-			do: raise ArgumentError, "given parameters count equal to 3 or " <>
+			do: raise ArgumentError, "lset given parameters count equal to 3 or " <>
 				"values not valid type"
 
  		lset(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
@@ -113,7 +219,7 @@ defmodule Rediscl.Query.Pipe do
 	def build(type, expr) when type == :lrange do
 		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
 			is_integer(Enum.at(expr, 1)) and is_integer(String.to_integer(Enum.at(expr, 2))),
-			do: raise ArgumentError, "given parameters count equal to 3 or " <>
+			do: raise ArgumentError, "lrange given parameters count equal to 3 or " <>
 				" values not valid type"
 
  		lrange(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
@@ -123,15 +229,11 @@ defmodule Rediscl.Query.Pipe do
 	def build(type, expr) when type == :lrem do
 		unless Enum.count(expr) == 3 and typeof!(Enum.at(expr, 0)) and
 			is_integer(Enum.at(expr, 1)) and typeof!(Enum.at(expr, 2)),
-			do: raise ArgumentError, "given parameters count equal to or " <>
+			do: raise ArgumentError, "lrem given parameters count equal to or " <>
 				"values not valid type"
 
  		lrem(Enum.at(expr, 0), Enum.at(expr, 1), Enum.at(expr, 2))
 	end
-
-	@doc ""
-	def build(_, expr) when not is_binary(expr), 
-		do: raise ArgumentError, "given parameter not valid"
 
 	@doc false
 	defp typeof!(v) do

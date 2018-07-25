@@ -4,9 +4,58 @@ defmodule Rediscl.Query.Api do
 	"""
 
 	@doc ""
+	@spec command(String.t, String.t) :: List.t
+	def command(command, key) do
+		[command, key]
+	end
+
+	@doc ""
+	@spec command(String.t) :: List.t
+	def command(command) do
+		[command]
+	end
+
+	@doc ""
+	@spec exists(String.t) :: List.t
+	def exists(key) do
+		["EXISTS", key]
+	end
+
+	@doc ""
+	@spec append(String.t, String.t) :: List.t
+	def append(key, value) do
+		["APPEND", key, value]
+	end
+
+	@doc ""
 	@spec set(String.t, String.t) :: List.t
 	def set(key, value) do
 		["SET", key, value]
+	end
+
+	@doc ""
+	@spec set_ex(String.t, Integer.t, String.t | Integer.t) :: 
+		List.t 
+	def set_ex(key, second, value) do
+		["SETEX", key, second, value]
+	end
+
+	@doc ""
+	@spec set_nx(String.t, String.t | Integer.t) :: List.t
+	def set_nx(key, value) do
+		["SETNX", key, value]
+	end
+
+	@doc ""
+	@spec set_range(String.t, Integer.t, String.t) :: List.t
+	def set_range(key, offset, value) do
+		["SETRANGE", key, offset, value]
+	end
+
+	@doc ""
+	@spec pset_ex(String.t, Integer.t, String.t | Integer.t) :: List.t
+	def pset_ex(key, milisecond, value) do
+		["PSETEX", key, milisecond, value]
 	end
 
 	@doc ""
@@ -16,9 +65,63 @@ defmodule Rediscl.Query.Api do
 	end
 
 	@doc ""
+	@spec get_range(String.t, Integer.t, Integer.t) :: List.t
+	def get_range(key, start, stop) do
+		["GETRANGE", key, start, stop]
+	end
+
+	@doc ""
+	@spec get_set(String.t, String.t) :: List.t
+	def get_set(key, value) do
+		["GETSET", key, value]
+	end
+
+	@doc ""
+	@spec strlen(String.t) :: List.t
+	def strlen(key) do
+		["STRLEN", key]
+	end
+
+	@doc ""
+	@spec incr(String.t) :: List.t
+	def incr(key) do
+		["INCR", key]
+	end
+
+	@doc ""
+	@spec incr_by(String.t, Integer.t) :: List.t
+	def incr_by(key, value) do
+		["INCRBY", key, value]
+	end
+
+	@doc ""
+	@spec incr_by_float(String.t, String.t) :: List.t
+	def incr_by_float(key, value) do
+		["INCRBYFLOAT", key, value]
+	end
+
+	@doc ""
+	@spec decr(String.t) :: List.t
+	def decr(key) do
+		["DECR", key]
+	end
+
+	@doc ""
+	@spec decr_by(String.t, Integer.t) :: List.t
+	def decr_by(key, decrement) do
+		["DECRBY", key, decrement]
+	end
+
+	@doc ""
 	@spec mset(List.t) :: List.t
 	def mset(key_and_values) do
 		["MSET"] ++ key_and_values
+	end
+
+	@doc ""
+	@spec mset_nx(List.t) :: List.t
+	def mset_nx(keys_and_values) do
+		["MSETNX"] ++ keys_and_values
 	end
 
 	@doc ""
