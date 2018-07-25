@@ -4,7 +4,7 @@ defmodule Rediscl.MixProject do
   def project do
     [
       app: :rediscl,
-      version: "0.1.7",
+      version: "0.1.8",
       elixir: "~> 1.6",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
