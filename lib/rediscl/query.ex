@@ -191,16 +191,15 @@ defmodule Rediscl.Query do
   @spec run_pipe(List.t) :: {:ok, __MODULE__.Pipe.t}
   def run_pipe(pipes) do
     {:ok, results} = __MODULE__.pipe(pipes)
+    # {results, _} =
+    #   Enum.map_reduce(results, 0, fn (x, acc) -> 
+    #     pipe = Enum.at(pipes, acc)
 
-    {results, _} =
-      Enum.map_reduce(results, 0, fn (x, acc) -> 
-        pipe = Enum.at(pipes, acc)
-
-        {{String.to_atom(String.downcase(List.first(pipe))), x}, 
-          acc + 1}
-      end)
+    #     {{String.to_atom(String.downcase(List.first(pipe))), x}, 
+    #       acc + 1}
+    #   end)
     
-    results = struct(__MODULE__.Pipe.Result, results)
+    # results = struct(__MODULE__.Pipe.Result, results)
 
     {:ok, results}
   end

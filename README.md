@@ -73,20 +73,6 @@ defmodule ExamplePipeBuilder do
                       lrem: ["key:13", 1, "-1"]
 
         {:ok, results} = Query.run_pipe(query)
-        ## Results
-        #    %Rediscl.Query.Pipe{
-        #      del: nil,
-        #      get: nil,
-        #      lpush: "3",
-        #      lrange: ["-3", "-2", "-1"],
-        #      lrem: "1",
-        #      lset: nil,
-        #      mget: nil,
-        #      mset: "OK",
-        #      rpush: "3",
-        #      set: "OK"
-        #    }
-        ##
     end
 end
 ```

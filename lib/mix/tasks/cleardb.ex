@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Clearrediscldb do
 	"""
 	use Mix.Task
 
-	import Mix.Rediscl
+	# import Mix.Rediscl
 	
 	alias Rediscl
   
@@ -19,15 +19,16 @@ defmodule Mix.Tasks.Clearrediscldb do
 
     Logger.info "== Started Cleardb"
 
-		{:ok, pid} = ensure_started(:rediscl, [])
+    Mix.Task.run "app.start"
+
+		# {:ok, pid} = ensure_started(:rediscl, [])
 
 		{:ok, keys} = Rediscl.Query.command("KEYS", "*")
-
 		if Enum.count(keys) > 0 do
-			{:ok, _keys} = Rediscl.Query.del(keys)			
+			{:ok, _keys} = Rediscl.Query.del(keys)
 		end
 
-		pid && Rediscl.Superv.stop(pid)
+		# pid && Rediscl.Superv.stop(pid)
 
     Logger.info "== Completed Cleardb"
 	end
