@@ -7,9 +7,11 @@ defmodule Rediscl.Query.Pipe.Result do
 						:getrange, :getset, :strlen, :incr, :incrby, :incrbyfloat,
 						:msetnx, :decr, :decrby]
 
+	alias __MODULE__.{Append, Set}
+
 	@type t :: %__MODULE__{
-		append: Integer.t, 
-		set: String.t,
+		append: Append.t | List.t, 
+		set: Set.t,
 		setex: String.t,
 		setnx: String.t,
 		setrange: Integer.t,

@@ -6,6 +6,6 @@ config :rediscl,
 	host: "localhost",
 	port: 6379,
 	password: "",
-	database: 0,
+	database: 1,
 	pool: 5,
 	timeout: 15_000

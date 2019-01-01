@@ -11,7 +11,7 @@ defmodule Rediscl.Superv do
 			:poolboy.child_spec(Rediscl, conf, [])
 		]
 
-		supervise(children, [strategy: :one_for_one])
+		Supervisor.init(children, [strategy: :one_for_one])
 	end
 	
 	def stop(pid, timeout \\ 5000) do
