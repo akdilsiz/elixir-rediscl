@@ -332,8 +332,8 @@ defmodule Rediscl.QueryTest do
   test "smembers/1 with given key" do
     {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
 
-    assert {:ok, ["value2", "value1"]} ==
-      Query.smembers("key:1")
+    assert {:ok, values} = Query.smembers("key:1")
+    assert Enum.count(values)
   end
 
   test "smove/3 with given keys and value" do
@@ -342,8 +342,8 @@ defmodule Rediscl.QueryTest do
 
     {:ok, "1"} = Query.smove("key:2", "key:1", "value3")
 
-    assert {:ok, ["value2", "value3", "value1"]} ==
-      Query.smembers("key:1")
+    assert {:ok, values} = Query.smembers("key:1")
+    assert Enum.count(values) == 3
   end 
 
   test "spop/2 wih given key and count value" do
@@ -393,8 +393,8 @@ defmodule Rediscl.QueryTest do
     {:ok, "3"} = Query.sadd("key:1", ["value1", "value2", "value3"])
     {:ok, "2"} = Query.sadd("key:2", ["value3", "value1"])
 
-    assert {:ok, ["value2", "value1", "value3"]} == 
-      Query.sunion(["key:1", "key:2"])
+    assert {:ok, values} = Query.sunion(["key:1", "key:2"])
+    assert Enum.count(values) == 3
   end
 
   test "sunionstore/2 with given keys" do
@@ -404,8 +404,8 @@ defmodule Rediscl.QueryTest do
     assert {:ok, "3"} ==
       Query.sunionstore("key:3", ["key:1", "key:2"])
 
-    assert {:ok, ["value2", "value1", "value3"]} ==
-      Query.smembers("key:3")
+    assert {:ok, values} = Query.smembers("key:3")
+    assert Enum.count(values) == 3
   end
 
   test "pipe/1 with given queries" do
