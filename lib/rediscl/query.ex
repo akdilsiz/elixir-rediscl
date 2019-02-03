@@ -137,6 +137,59 @@ defmodule Rediscl.Query do
   def lrem(key, count, value),
     do: query(Api.lrem(key, count, value))
 
+  @doc ""
+  def sadd(key, values),
+    do: query(Api.sadd(key, values))
+
+  @doc ""
+  def scard(key), do: query(Api.scard(key))
+
+  @doc ""
+  def sdiff(keys), do: query(Api.sdiff(keys))
+
+  @doc ""
+  def sdiffstore(key, keys), do: query(Api.sdiffstore(key, keys))
+
+  @doc ""
+  def sinter(keys), do: query(Api.sinter(keys))
+
+  @doc ""
+  def sinterstore(key, keys), do: query(Api.sinterstore(key, keys))
+
+  @doc ""
+  def sismember(key, value), do: query(Api.sismember(key, value)) 
+
+  @doc ""
+  def smembers(key), do: query(Api.smembers(key))
+
+  @doc ""
+  def smove(key_one, key_two, value), 
+    do: query(Api.smove(key_one, key_two, value))
+
+  @doc ""
+  def spop(key, count), do: query(Api.spop(key, count))
+
+  @doc ""
+  def spop(key), do: query(Api.spop(key))
+
+  @doc ""
+  def srandmember(key, count), do: query(Api.srandmember(key, count))
+
+  @doc ""
+  def srandmember(key), do: query(Api.srandmember(key))
+
+  @doc ""
+  def srem(key, value), do: query(Api.srem(key, value))
+
+  @doc ""
+  def sscan(key, values), do: query(Api.sscan(key, values))
+
+  @doc ""
+  def sunion(keys), do: query(Api.sunion(keys))
+
+  @doc ""
+  def sunionstore(key, keys), do: query(Api.sunionstore(key, keys))
+
   @doc """
     Pipe queries  
   """
