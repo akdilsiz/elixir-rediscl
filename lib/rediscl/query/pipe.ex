@@ -5,12 +5,16 @@ defmodule Rediscl.Query.Pipe do
 	defstruct [:set, :get, :mset, :mget, :del, :lpush, :rpush, :lrange,
 						:lrem, :lset, :append, :exists, :setex, :setnx, :setrange, :psetex,
 						:getrange, :getset, :strlen, :incr, :incrby, :incrbyfloat,
-						:msetnx, :decr, :decrby]
+						:msetnx, :decr, :decrby, :sadd, :scard, :sdiff, :sdiffstore,
+						:sinter, :sinterstore, :sismember, :smembers, :smove, :spop,
+						:srandmember, :srem, :sscan, :sunion, :sunionstore]
 
 	@pipes [:set, :get, :mset, :mget, :del, :lpush, :rpush, :lrange,
 						:lrem, :lset, :append, :exists, :setex, :setnx, :setrange, :psetex,
 						:getrange, :getset, :strlen, :incr, :incrby, :incrbyfloat,
-						:msetnx, :decr, :decrby]
+						:msetnx, :decr, :decrby, :sadd, :scard, :sdiff, :sdiffstore,
+						:sinter, :sinterstore, :sismember, :smembers, :smove, :spop,
+						:srandmember, :srem, :sscan, :sunion, :sunionstore]
 
 	import Rediscl.Query.Api
 	

@@ -277,6 +277,137 @@ defmodule Rediscl.QueryTest do
   	assert {:ok, ["value2", "value1"]} = lrange
   end
 
+  test "sadd/2 with given key and value" do
+    assert {:ok, "1"} == Query.sadd("key:1", ["value1"])
+  end
+
+  test "scard/1 with given key" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+
+    assert {:ok, "2"} == Query.scard("key:1")
+  end
+
+  test "sdiff/1 with given keys" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+    {:ok, "1"} = Query.sadd("key:2", ["value1"])
+
+    sdiff = Query.sdiff(["key:1", "key:2"])
+
+    assert {:ok, ["value2"]} == sdiff
+  end 
+
+  test "sdiffstore/2 with given keys" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+    {:ok, "1"} = Query.sadd("key:2", ["value1"])
+
+    {:ok, "1"} = Query.sdiffstore("key:3", ["key:1", "key:2"])
+
+    assert {:ok, ["value2"]} == Query.smembers("key:3")
+  end
+
+  test "sinter/1 with given keys" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+    {:ok, "1"} = Query.sadd("key:2", ["value1"])
+
+    sinter = Query.sinter(["key:1", "key:2"])
+
+    assert {:ok, ["value1"]} == sinter
+  end
+
+  test "sinterstore/2 with given keys" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+    {:ok, "1"} = Query.sadd("key:2", ["value1"])
+
+    {:ok, "1"} = Query.sinterstore("key:3", ["key:1", "key:2"])
+
+    assert {:ok, ["value1"]} == Query.smembers("key:3")
+  end
+
+  test "sismember/2 with given key and value" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+
+    assert {:ok, "1"} == Query.sismember("key:1", "value1")
+  end
+
+  test "smembers/1 with given key" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+
+    assert {:ok, ["value2", "value1"]} ==
+      Query.smembers("key:1")
+  end
+
+  test "smove/3 with given keys and value" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+    {:ok, "1"} = Query.sadd("key:2", ["value3"])
+
+    {:ok, "1"} = Query.smove("key:2", "key:1", "value3")
+
+    assert {:ok, ["value2", "value3", "value1"]} ==
+      Query.smembers("key:1")
+  end 
+
+  test "spop/2 wih given key and count value" do
+    {:ok, "3"} = Query.sadd("key:1", ["value1", "value2", "value3"])
+
+    assert {:ok, _value} = Query.spop("key:1", 1)
+
+    assert {:ok, _values} = Query.smembers("key:1")
+  end
+
+  test "spop/1 with given key" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+  
+    assert {:ok, _value} = Query.spop("key:1")
+  end
+
+  test "srandmember/2 with given key and count value" do
+    {:ok, "3"} = Query.sadd("key:1", ["value1", "value2", "value3"])
+
+    assert {:ok, values} = Query.srandmember("key:1", 2)
+    assert Enum.count(values) == 2
+  end
+
+  test "srandmember/1 with given key" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+
+    assert {:ok, value} = Query.srandmember("key:1")
+    assert is_binary(value)
+  end
+
+  test "srem/2 with given key and value" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+
+    assert {:ok, "1"} == Query.srem("key:1", "value1")
+    assert {:ok, ["value2"]} == Query.smembers("key:1")
+  end
+
+  test "sscan/2 with given key and values" do
+    {:ok, "4"} = 
+      Query.sadd("key:1", ["value1", "value2", "oldvalue1", "anohter1"])
+
+    assert {:ok, ["0", ["anohter1"]]} ==
+      Query.sscan("key:1", [0, "match", "anohter*"])
+  end
+
+  test "sunion/1 with given keys" do
+    {:ok, "3"} = Query.sadd("key:1", ["value1", "value2", "value3"])
+    {:ok, "2"} = Query.sadd("key:2", ["value3", "value1"])
+
+    assert {:ok, ["value2", "value1", "value3"]} == 
+      Query.sunion(["key:1", "key:2"])
+  end
+
+  test "sunionstore/2 with given keys" do
+    {:ok, "3"} = Query.sadd("key:1", ["value1", "value2", "value3"])
+    {:ok, "2"} = Query.sadd("key:2", ["value3", "value1"])
+
+    assert {:ok, "3"} ==
+      Query.sunionstore("key:3", ["key:1", "key:2"])
+
+    assert {:ok, ["value2", "value1", "value3"]} ==
+      Query.smembers("key:3")
+  end
+
   test "pipe/1 with given queries" do
     {:ok, pipe} = Query.pipe([["SET", "a", 1], ["GET", "a"]])
 

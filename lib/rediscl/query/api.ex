@@ -165,4 +165,106 @@ defmodule Rediscl.Query.Api do
 	def lrem(key, count, value) do
 		["LREM", key, count, value]
 	end
+
+	@doc ""
+	@spec sadd(String.t, List.t) :: List.t
+	def sadd(key, values) do
+		["SADD", key] ++ values
+	end
+
+	@doc ""
+	@spec scard(String.t) :: List.t
+	def scard(key) do
+		["SCARD", key]
+	end
+
+	@doc ""
+	@spec sdiff(List.t) :: List.t
+	def sdiff(keys) do
+		["SDIFF"] ++ keys
+	end
+
+	@doc ""
+	@spec sdiffstore(String.t, List.t) :: List.t
+	def sdiffstore(key, keys) do
+		["SDIFFSTORE", key] ++ keys
+	end
+
+	@doc ""
+	@spec sinter(List.t) :: List.t
+	def sinter(keys) do
+		["SINTER"] ++ keys
+	end
+
+	@doc ""
+	@spec sinterstore(String.t, List.t) :: List.t
+	def sinterstore(key, keys) do
+		["SINTERSTORE", key] ++ keys
+	end
+
+	@doc ""
+	@spec sismember(String.t, String.t) :: List.t
+	def sismember(key, value) do
+		["SISMEMBER", key, value]
+	end
+
+	@doc ""
+	@spec smembers(String.t) :: List.t
+	def smembers(key) do
+		["SMEMBERS", key]
+	end
+
+	@doc ""
+	@spec smove(String.t, String.t, String.t) :: List.t
+	def smove(key_one, key_two, value) do
+		["SMOVE", key_one, key_two, value]
+	end
+
+	@doc ""
+	@spec spop(String.t, Integer.t) :: List.t
+	def spop(key, count) do
+		["SPOP", key, count]
+	end
+
+	@doc ""
+	@spec spop(String.t) :: List.t
+	def spop(key) do
+		["SPOP", key]
+	end
+
+	@doc ""
+	@spec srandmember(String.t, Integer.t) :: List.t
+	def srandmember(key, count) do
+		["SRANDMEMBER", key, count]
+	end
+
+	@doc ""
+	@spec srandmember(String.t) :: List.t
+	def srandmember(key) do
+		["SRANDMEMBER", key]
+	end
+
+	@doc ""
+	@spec srem(String.t, String.t) :: List.t
+	def srem(key, value) do
+		["SREM", key, value]
+	end
+
+	@doc ""
+	@spec sscan(String.t | Integer.t, List.t) :: List.t
+	def sscan(key, values) do
+		["SSCAN", key] ++ values
+	end
+
+	@doc ""
+	@spec sunion(List.t) :: List.t
+	def sunion(keys) do
+		["SUNION"] ++ keys
+	end
+
+	@doc ""
+	@spec sunionstore(String.t, List.t) :: List.t
+	def sunionstore(key, keys) do
+		["SUNIONSTORE", key] ++ keys
+	end
 end
