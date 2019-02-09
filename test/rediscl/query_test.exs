@@ -381,6 +381,13 @@ defmodule Rediscl.QueryTest do
     assert {:ok, ["value2"]} == Query.smembers("key:1")
   end
 
+  test "srem/2 with given key and values" do
+    {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
+
+    assert {:ok, "2"} == Query.srem("key:1", ["value1", "value2"])
+    assert {:ok, []} == Query.smembers("key:1")
+  end
+
   test "sscan/2 with given key and values" do
     {:ok, "4"} = 
       Query.sadd("key:1", ["value1", "value2", "oldvalue1", "anohter1"])

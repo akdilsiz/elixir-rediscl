@@ -245,6 +245,12 @@ defmodule Rediscl.Query.Api do
 	end
 
 	@doc ""
+	@spec srem(String.t, List.t) :: List.t
+	def srem(key, values) when is_list(values) do
+		["SREM", key] ++ values
+	end
+
+	@doc ""
 	@spec srem(String.t, String.t) :: List.t
 	def srem(key, value) do
 		["SREM", key, value]
