@@ -179,7 +179,7 @@ defmodule Rediscl.Query do
   def srandmember(key), do: query(Api.srandmember(key))
 
   @doc ""
-  def srem(key, value), do: query(Api.srem(key, value))
+  def srem(key, value_or_values), do: query(Api.srem(key, value_or_values))
 
   @doc ""
   def sscan(key, values), do: query(Api.sscan(key, values))

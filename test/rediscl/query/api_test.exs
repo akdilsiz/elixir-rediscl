@@ -106,6 +106,11 @@ defmodule Rediscl.Query.ApiTest do
 		assert ["SREM", "key:1", "value"] == Api.srem("key:1", "value")
 	end
 
+	test "srem/2 with key and values" do
+		assert ["SREM", "key:1", "value", "value2"] == 
+			Api.srem("key:1", ["value", "value2"])
+	end
+
 	test "sscan/2" do
 		assert ["SSCAN", "key:1", 0, "match", "a*"] ==
 			Api.sscan("key:1", [0, "match", "a*"])
