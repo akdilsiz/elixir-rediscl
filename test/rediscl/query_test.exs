@@ -112,6 +112,10 @@ defmodule Rediscl.QueryTest do
   	assert {:ok, "2"} = get
   end
 
+  test "undefined get query with given key" do
+    {:error, :undefined} = Query.get("undefinedkey:1")
+  end
+
   test "get_range/3 with given key, start and stop " do
     {:ok, "OK"} = Query.set("get_range", "Hello World")
 
