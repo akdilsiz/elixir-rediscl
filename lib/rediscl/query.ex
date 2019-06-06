@@ -235,6 +235,8 @@ defmodule Rediscl.Query do
         {:error, :authentication_error}
       # {:error, error} ->
         {:error, :no_authentication_password}
+      {:error, error} ->
+        {:error, error}
       {:ok, :undefined} ->
         {:error, :undefined}
       {:ok, response} ->
