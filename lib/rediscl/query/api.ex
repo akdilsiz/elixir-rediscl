@@ -4,6 +4,12 @@ defmodule Rediscl.Query.Api do
 	"""
 
 	@doc ""
+	@spec command(String.t, List.t) :: List.t
+	def command(command, keys) when is_list(keys) do
+		[command] ++ keys
+	end
+
+	@doc ""
 	@spec command(String.t, String.t) :: List.t
 	def command(command, key) do
 		[command, key]
