@@ -60,6 +60,14 @@ defmodule Rediscl.QueryTest do
   	{:ok, _keys} = command
   end
 
+  test "command/2 keys is list" do
+    {:ok, "OK"} = Query.set("keys:1", "value:1")
+
+    command = Query.command("EXPIRE", ["keys:1", 16_000])
+
+    assert {:ok, "1"} = command
+  end
+
   test "command/1 unknown commant test" do
   	command = Query.command("UNKNOWN")
 

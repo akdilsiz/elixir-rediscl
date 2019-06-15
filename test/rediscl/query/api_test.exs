@@ -4,6 +4,10 @@ defmodule Rediscl.Query.ApiTest do
 
 	alias Rediscl.Query.Api
 
+	test "command/2 keys is list" do
+		assert ["EXPIRE", "key:1", 16_000] == Api.command("EXPIRE", ["key:1", 16_000])
+	end
+
 	test "set/2" do
 		assert ["SET", "key:1", "1"] == Api.set("key:1", "1")
 	end
