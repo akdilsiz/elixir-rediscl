@@ -13,12 +13,12 @@ defmodule Rediscl.Query.Util do
 	
 	defp jstring(params, opts) when is_list(params) do
 		Enum.map(params, 
-			&case Rediscl.Typeable.typeof(&1) do
-				"string" ->
+			&cond do
+				is_binary(&1) ->
 					&1
-				"integer" ->
+				is_integer(&1) ->
 					&1
-				_ ->
+				true ->
 					@json_library.encode!(&1, opts)
 			end)
 	end

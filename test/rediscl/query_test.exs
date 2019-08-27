@@ -482,6 +482,17 @@ defmodule Rediscl.QueryTest do
         [{:jsonable, true}, {:encode_key, true}])
   end
 
+  test "sadd/2 with given key and value and jsonable and custom struct" do
+    struct = %Rediscl.QueryTestStruct{
+      key: 1,
+      value: "value"
+    }
+
+    assert {:ok, "1"} == 
+      Query.sadd(%{key: :sadd}, [struct], 
+        [{:jsonable, true}, {:encode_key, true}])
+  end
+
   test "scard/1 with given key" do
     {:ok, "2"} = Query.sadd("key:1", ["value1", "value2"])
 
