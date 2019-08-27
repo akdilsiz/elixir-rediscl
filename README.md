@@ -2,6 +2,7 @@
 
 A minimal redis client with connection pooling (using eredis and poolboy)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/58e142f2a26c45528daad73ad3aa03d6)](https://app.codacy.com/app/akdilsiz/elixir-rediscl?utm_source=github.com&utm_medium=referral&utm_content=akdilsiz/elixir-rediscl&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/akdilsiz/elixir-rediscl.svg?branch=master)](https://travis-ci.org/akdilsiz/elixir-rediscl)
 [![Coverage Status](https://coveralls.io/repos/github/akdilsiz/elixir-rediscl/badge.svg?branch=master)](https://coveralls.io/github/akdilsiz/elixir-rediscl?branch=master)
 [![Hex.pm](https://img.shields.io/hexpm/v/rediscl.svg)](https://hex.pm/packages/rediscl)
@@ -40,6 +41,12 @@ config :rediscl,
     database: 0,
     pool: 15,
     timeout: 15_000
+```
+
+If do you are using json library?
+```elixir
+config :rediscl,
+  json_library: Jason
 ```
 
 ## Examples

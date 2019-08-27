@@ -2,13 +2,17 @@ defmodule Rediscl.Query do
 	@moduledoc """
     Minimal redis command
   """
+
+  import Rediscl.Query.Util, only: [to_any: 2]
+
 	alias Rediscl.Work
   alias Rediscl.Query.Api
 
   @doc """
     Run a command with key
   """
-  def command(command, key), do: query(Api.command(command, key))
+  def command(command, key, opts \\ []), 
+    do: query(Api.command(command, key, opts), opts)
 
 	@doc """
     Run a command
@@ -18,183 +22,189 @@ defmodule Rediscl.Query do
   @doc """
     Key is exists
   """
-  def exists(key), do: query(Api.exists(key))
+  def exists(key, opts \\ []), do: query(Api.exists(key, opts), opts)
 
   @doc ""
-  def append(key, value), do: query(Api.append(key, value))
+  def append(key, value, opts \\ []), 
+    do: query(Api.append(key, value, opts), opts)
 
   @doc """
     Get a key redis client
   """
-  def get(key), do: query(Api.get(key))
+  def get(key, opts \\ []), do: query(Api.get(key, opts), opts)
+
+  @doc """
+    Force et a key redis client
+  """
+  def get!(key, opts \\ []), do: query!(Api.get(key, opts), opts)
 
   @doc ""
-  def get_range(key, start, stop),
-    do: query(Api.get_range(key, start, stop))
+  def get_range(key, start, stop, opts \\ []),
+    do: query(Api.get_range(key, start, stop, opts), opts)
 
   @doc ""
-  def get_set(key, value), do: query(Api.get_set(key, value))
+  def get_set(key, value, opts \\ []), 
+    do: query(Api.get_set(key, value, opts), opts)
 
   @doc ""
-  def strlen(key), do: query(Api.strlen(key))
+  def strlen(key, opts \\ []), do: query(Api.strlen(key, opts), opts)
 
   @doc ""
-  def incr(key), do: query(Api.incr(key))
+  def incr(key, opts \\ []), do: query(Api.incr(key, opts), opts)
 
   @doc ""
-  def incr_by_float(key, value), do: query(Api.incr_by_float(key, value))
+  def incr_by_float(key, value, opts \\ []), 
+    do: query(Api.incr_by_float(key, value, opts), opts)
 
   @doc ""
-  def incr_by(key, value), do: query(Api.incr_by(key, value))
+  def incr_by(key, value, opts \\ []), 
+    do: query(Api.incr_by(key, value, opts), opts)
 
   @doc ""
-  def decr(key), do: query(Api.decr(key))
+  def decr(key, opts \\ []), do: query(Api.decr(key, opts), opts)
 
   @doc ""
-  def decr_by(key, decrement), do: query(Api.decr_by(key, decrement))
+  def decr_by(key, decrement, opts \\ []), 
+    do: query(Api.decr_by(key, decrement, opts), opts)
 
   @doc """
     Multiple get a value with given keys redis client
   """
-  def mget(keys) when is_list(keys), do: query(Api.mget(keys))
+  def mget(keys, opts \\ []) when is_list(keys), 
+    do: query(Api.mget(keys, opts), opts)
 
   @doc """ 
     Set a key, single value redis client
   """
-  def set(key, value), do: query(Api.set(key, value))
+  def set(key, value, opts \\ []), do: query(Api.set(key, value, opts), opts)
 
   @doc ""
-  def set_ex(key, second, value), 
-    do: query(Api.set_ex(key, second, value))
+  def set_ex(key, second, value, opts \\ []), 
+    do: query(Api.set_ex(key, second, value, opts), opts)
 
   @doc ""
-  def set_nx(key, value), do: query(Api.set_nx(key, value))
+  def set_nx(key, value, opts \\ []), 
+    do: query(Api.set_nx(key, value, opts), opts)
 
   @doc ""
-  def set_range(key, offset, value), 
-    do: query(Api.set_range(key, offset, value))
+  def set_range(key, offset, value, opts \\ []), 
+    do: query(Api.set_range(key, offset, value, opts), opts)
 
   @doc ""
-  def pset_ex(key, milisecond, value),
-    do: query(Api.pset_ex(key, milisecond, value))
+  def pset_ex(key, milisecond, value, opts \\ []),
+    do: query(Api.pset_ex(key, milisecond, value, opts), opts)
 
   @doc """
     Multiple set a keys and values redis clients
   """
-  def mset(keys_and_values) when is_list(keys_and_values), 
-    do: query(Api.mset(keys_and_values))
+  def mset(keys_and_values, opts \\ []) when is_list(keys_and_values), 
+    do: query(Api.mset(keys_and_values, opts), opts)
 
   @doc ""
-  def mset_nx(keys_and_values) when is_list(keys_and_values),
-    do: query(Api.mset_nx(keys_and_values))
-
-  def del(keys) when is_list(keys), do: query(Api.del(keys))
+  def mset_nx(keys_and_values, opts \\ []) when is_list(keys_and_values),
+    do: query(Api.mset_nx(keys_and_values, opts), opts)
 
   @doc """
-    Del a key with given key name
+    Del a keys
   """
-  def del(key), do: query(Api.del([key]))
-
-  @doc """
-    Left push for list with key and values when first param is key
-  """
-  def lpush(values, key) when is_list(values),
-    do: query(Api.lpush(key, values))
+  def del(keys, opts \\ []), do: query(Api.del(keys, opts), opts)
 
   @doc """
     Left push for list with key and values
   """
-  def lpush(key, value),
-    do: query(Api.lpush(key, List.flatten([value])))
-
-  @doc """
-    Right push for list with key and values when first param is key
-  """
-  def rpush(values, key) when is_list(values),
-    do: query(Api.rpush(key, values))
+  def lpush(key, value, opts \\ []),
+    do: query(Api.lpush(key, List.flatten([value]), opts), opts)
 
   @doc """
    Right push for list with key and values
   """
-  def rpush(key, value),
-    do: query(Api.rpush(key, List.flatten([value])))
+  def rpush(key, value, opts \\ []),
+    do: query(Api.rpush(key, List.flatten([value]), opts), opts)
 
   @doc """
     Get for list with given key and start indx and stop index
   """
-  def lrange(key, start, stop),
-    do: query(Api.lrange(key, start, stop))
+  def lrange(key, start, stop, opts \\ []),
+    do: query(Api.lrange(key, start, stop, opts), opts)
 
   @doc """
     Set from list with given key and index and value
   """
-  def lset(key, index, value),
-    do: query(Api.lset(key, index, value))
+  def lset(key, index, value, opts \\ []),
+    do: query(Api.lset(key, index, value, opts), opts)
 
   @doc """
     Remove from list element with given key and element count
   """
-  def lrem(key, count, value),
-    do: query(Api.lrem(key, count, value))
+  def lrem(key, count, value, opts \\ []),
+    do: query(Api.lrem(key, count, value, opts), opts)
 
   @doc ""
-  def sadd(key, values),
-    do: query(Api.sadd(key, values))
+  def sadd(key, values, opts \\ []),
+    do: query(Api.sadd(key, List.flatten([values]), opts), opts)
 
   @doc ""
-  def scard(key), do: query(Api.scard(key))
+  def scard(key, opts \\ []), do: query(Api.scard(key, opts), opts)
 
   @doc ""
-  def sdiff(keys), do: query(Api.sdiff(keys))
+  def sdiff(keys, opts \\ []), do: query(Api.sdiff(keys, opts), opts)
 
   @doc ""
-  def sdiffstore(key, keys), do: query(Api.sdiffstore(key, keys))
+  def sdiffstore(key, keys, opts \\ []), 
+    do: query(Api.sdiffstore(key, keys, opts), opts)
 
   @doc ""
-  def sinter(keys), do: query(Api.sinter(keys))
+  def sinter(keys, opts \\ []), do: query(Api.sinter(keys, opts), opts)
 
   @doc ""
-  def sinterstore(key, keys), do: query(Api.sinterstore(key, keys))
+  def sinterstore(key, keys, opts \\ []), 
+    do: query(Api.sinterstore(key, keys, opts), opts)
 
   @doc ""
-  def sismember(key, value), do: query(Api.sismember(key, value)) 
+  def sismember(key, value, opts \\ []), 
+    do: query(Api.sismember(key, value, opts), opts) 
 
   @doc ""
-  def smembers(key), do: query(Api.smembers(key))
+  def smembers(key, opts \\ []), do: query(Api.smembers(key, opts), opts)
 
   @doc ""
-  def smove(key_one, key_two, value), 
-    do: query(Api.smove(key_one, key_two, value))
+  def smove(key_one, key_two, value, opts \\ []), 
+    do: query(Api.smove(key_one, key_two, value, opts), opts)
 
   @doc ""
-  def spop(key, count), do: query(Api.spop(key, count))
+  def spop(key, count \\ nil, opts \\ []), 
+    do: query(Api.spop(key, count, opts), opts)
+
+  # @doc ""
+  # def spop(key, opts \\ []), do: query(Api.spop(key, opts), opts)
 
   @doc ""
-  def spop(key), do: query(Api.spop(key))
+  def srandmember(key, count \\ nil, opts \\ []), 
+    do: query(Api.srandmember(key, count, opts), opts)
+
+  # @doc ""
+  # def srandmember(key, opts \\ []), do: query(Api.srandmember(key, opts), opts)
 
   @doc ""
-  def srandmember(key, count), do: query(Api.srandmember(key, count))
+  def srem(key, value_or_values, opts \\ []), 
+    do: query(Api.srem(key, List.flatten([value_or_values]), opts), opts)
 
   @doc ""
-  def srandmember(key), do: query(Api.srandmember(key))
+  def sscan(key, values, opts \\ []), 
+    do: query(Api.sscan(key, values, opts), opts)
 
   @doc ""
-  def srem(key, value_or_values), do: query(Api.srem(key, value_or_values))
+  def sunion(keys, opts \\ []), do: query(Api.sunion(keys, opts), opts)
 
   @doc ""
-  def sscan(key, values), do: query(Api.sscan(key, values))
-
-  @doc ""
-  def sunion(keys), do: query(Api.sunion(keys))
-
-  @doc ""
-  def sunionstore(key, keys), do: query(Api.sunionstore(key, keys))
+  def sunionstore(key, keys, opts \\ []), 
+    do: query(Api.sunionstore(key, keys, opts), opts)
 
   @doc """
     Pipe queries  
   """
   def pipe(queries) when is_list(queries), 
-    do: Work.query_pipe(queries) |> parse_response(:pipe)
+    do: parse_response(Work.query_pipe(queries), :pipe)
 
   # @doc false
   # defp query(method, key, values) when is_list(values),
@@ -217,9 +227,21 @@ defmodule Rediscl.Query do
   #   do: Work.query([method, key]) |> parse_response
 
   @doc false
-  @spec query(List.t) :: {:ok, any}
-  defp query(command) when is_list(command),
-    do: Work.query(command) |> parse_response
+  @spec query(List.t, Keyword.t) :: {:ok, any}
+  defp query(command, opts \\ []) when is_list(command),
+    do: parse_response(Work.query(command), opts)
+
+  @doc false
+  @spec query!(List.t, Keyword.t) :: {:ok, any}
+  defp query!(command, opts \\ []) when is_list(command) do
+    case parse_response(Work.query(command), opts) do
+      {:ok, response} ->
+        response
+      {:error, error} ->
+        raise Rediscl.Error.InvalidResponseError, %{status: :error,
+          message: error}
+    end
+  end
 
   @doc false
   defp parse_response(response, :pipe) do
@@ -227,7 +249,7 @@ defmodule Rediscl.Query do
   end
 
   @doc false
-  defp parse_response(response) do
+  defp parse_response(response, opts) do
     case response do
       {:error, "ERR " <> error} ->
         {:error, error}
@@ -240,7 +262,12 @@ defmodule Rediscl.Query do
       {:ok, :undefined} ->
         {:error, :undefined}
       {:ok, response} ->
-        {:ok, response}
+        cond do
+          Keyword.get(opts, :json_response, false) == true ->
+            {:ok, to_any(response, Keyword.get(opts, :json_response_opts, []))}            
+          true ->
+            {:ok, response}
+        end
     end
   end
 
@@ -252,7 +279,7 @@ defmodule Rediscl.Query do
     #   Enum.map_reduce(results, 0, fn (x, acc) -> 
     #     pipe = Enum.at(pipes, acc)
 
-    #     {{String.to_atom(String.downcase(List.first(pipe))), x}, 
+    #     {{String.to_atom(String.downcase(List.first(pipe), opts)), x}, 
     #       acc + 1}
     #   end)
     
