@@ -67,9 +67,11 @@ defmodule Example do
     end
 
     def example_jsonable_one do
-      ## If you are only going to use it with a key.
+      ## If you are only going to use it with a key for response
+      ## For this example, options are given based on the Jason library.
       {:ok, _} =
-        Rediscl.Query.get(%{key: 1}, [{:jsonable, true}])
+        Rediscl.Query.get(%{key: 1}, 
+          [{:json_response, true}, {:json_response_opts, [{:keys, :atoms!}]}])
     end
     
     def example_jsonable_two do
