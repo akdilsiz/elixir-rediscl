@@ -65,6 +65,33 @@ defmodule Example do
     def example_three do
         {:ok, list_values} = Rediscl.Query.mget(["key:1", "key:2", "key:3"])
     end
+
+    def example_jsonable_one do
+      ## If you are only going to use it with a key.
+      {:ok, _} =
+        Rediscl.Query.get(%{key: 1}, [{:jsonable, true}])
+    end
+    
+    def example_jsonable_two do
+      ## If you are only going to use it with key and value.
+      {:ok, _} =
+        Rediscl.Query.set(%{key: 1}, %{value: 1}, 
+          [{:jsonable, true}, {:encode_key, true}])
+    end
+
+    def example_jsonable_three do
+      ## If you're going to use a query with a lot of keys and a value.
+      {:ok, _} =
+        Query.smove(%{key: 2}, %{key: 1}, "value3",
+          [{:jsonable, true}, {:encode_multiple_keys, true}])
+    end
+
+    def example_jsonable_four do
+      ## If you're going to use a query with a lot of keys.
+      {:ok, _values} = 
+        Query.sunion([%{key: 1}, "key:2"],
+          [{:jsonable, true}, {:encode_multiple_keys, true}])
+    end    
 end
 
 defmodule ExamplePipeBuilder do
