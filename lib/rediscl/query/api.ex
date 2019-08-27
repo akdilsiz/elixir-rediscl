@@ -411,8 +411,7 @@ defmodule Rediscl.Query.Api do
 			true ->
 				key
 		end] ++ cond do
-			Keyword.get(opts, :jsonable, false) == true and
-			Keyword.get(opts, :encode_key, false) == true ->
+			Keyword.get(opts, :jsonable, false) == true ->
 				to_jstring(values, Keyword.get(opts, :json_opts, []))
 			true ->
 				values
