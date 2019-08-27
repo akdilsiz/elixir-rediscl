@@ -19,6 +19,7 @@
     "lib/rediscl/work.ex",
     "lib/rediscl/superv.ex",
     "lib/mix",
-    "lib/util"
+    "lib/rediscl/util",
+    "lib/rediscl/error"
   ]
 }

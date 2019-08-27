@@ -3,16 +3,21 @@ defmodule Rediscl.Query.Api do
 		Query api funcs
 	"""
 
-	@doc ""
-	@spec command(String.t, List.t) :: List.t
-	def command(command, keys) when is_list(keys) do
-		[command] ++ keys
-	end
+	import Rediscl.Query.Util, only: [to_jstring: 2]
 
 	@doc ""
-	@spec command(String.t, String.t) :: List.t
-	def command(command, key) do
-		[command, key]
+	@spec command(String.t, List.t, Keyword.t) :: List.t
+	def command(command, key_or_keys, opts \\ []) do
+		[command] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key_or_keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				if is_list(key_or_keys) do
+					key_or_keys
+				else
+					[key_or_keys]
+				end
+		end
 	end
 
 	@doc ""
@@ -22,261 +27,646 @@ defmodule Rediscl.Query.Api do
 	end
 
 	@doc ""
-	@spec exists(String.t) :: List.t
-	def exists(key) do
-		["EXISTS", key]
+	@spec exists(String.t | List.t | Map.t, Keyword.t) :: List.t
+	def exists(key, opts \\ []) do
+		["EXISTS", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec append(String.t, String.t) :: List.t
-	def append(key, value) do
-		["APPEND", key, value]
+	@spec append(String.t | List.t | Map.t, String.t | List.t | Map.t, Keyword.t) 
+		:: List.t
+	def append(key, value, opts \\ []) do
+		["APPEND", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec set(String.t, String.t) :: List.t
-	def set(key, value) do
-		["SET", key, value]
+	@spec set(String.t | List.t | Map.t, String.t | List.t | Map.t, Keyword.t) 
+		:: List.t
+	def set(key, value, opts \\ []) do
+		["SET", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec set_ex(String.t, Integer.t, String.t | Integer.t) :: 
-		List.t 
-	def set_ex(key, second, value) do
-		["SETEX", key, second, value]
+	@spec set_ex(String.t | List.t | Map.t, Integer.t, 
+		String.t | List.t | Map.t | Integer.t, 
+		Keyword.t) 
+		:: List.t 
+	def set_ex(key, second, value, opts \\ []) do
+		["SETEX", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, second, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec set_nx(String.t, String.t | Integer.t) :: List.t
-	def set_nx(key, value) do
-		["SETNX", key, value]
+	@spec set_nx(String.t | List.t | Map.t, 
+		String.t | List.t | Map.t | Integer.t,
+		Keyword.t) 
+		:: List.t
+	def set_nx(key, value, opts \\ []) do
+		["SETNX", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec set_range(String.t, Integer.t, String.t) :: List.t
-	def set_range(key, offset, value) do
-		["SETRANGE", key, offset, value]
+	@spec set_range(String.t | List.t | Map.t, 
+		Integer.t, 
+		String.t | List.t | Map.t, 
+		Keyword.t) 
+		:: List.t
+	def set_range(key, offset, value, opts \\ []) do
+		["SETRANGE", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, offset, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec pset_ex(String.t, Integer.t, String.t | Integer.t) :: List.t
-	def pset_ex(key, milisecond, value) do
-		["PSETEX", key, milisecond, value]
+	@spec pset_ex(String.t, Integer.t, String.t | Integer.t, Keyword.t) :: List.t
+	def pset_ex(key, milisecond, value, opts \\ []) do
+		["PSETEX", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, milisecond, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec get(String.t) :: List.t
-	def get(key) do
-		["GET", key]
+	@spec get(String.t, Keyword.t) :: List.t
+	def get(key, opts \\ []) do
+		["GET", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec get_range(String.t, Integer.t, Integer.t) :: List.t
-	def get_range(key, start, stop) do
-		["GETRANGE", key, start, stop]
+	@spec get_range(String.t, Integer.t, Integer.t, Keyword.t) :: List.t
+	def get_range(key, start, stop, opts \\ []) do
+		["GETRANGE", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, start, stop]
 	end
 
 	@doc ""
-	@spec get_set(String.t, String.t) :: List.t
-	def get_set(key, value) do
-		["GETSET", key, value]
+	@spec get_set(String.t, String.t, Keyword.t) :: List.t
+	def get_set(key, value, opts \\ []) do
+		["GETSET", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec strlen(String.t) :: List.t
-	def strlen(key) do
-		["STRLEN", key]
+	@spec strlen(String.t, Keyword.t) :: List.t
+	def strlen(key, opts \\ []) do
+		["STRLEN", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec incr(String.t) :: List.t
-	def incr(key) do
-		["INCR", key]
+	@spec incr(String.t, Keyword.t) :: List.t
+	def incr(key, opts \\ []) do
+		["INCR", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec incr_by(String.t, Integer.t) :: List.t
-	def incr_by(key, value) do
-		["INCRBY", key, value]
+	@spec incr_by(String.t, Integer.t, Keyword.t) :: List.t
+	def incr_by(key, value, opts \\ []) do
+		["INCRBY", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, value]
 	end
 
 	@doc ""
-	@spec incr_by_float(String.t, String.t) :: List.t
-	def incr_by_float(key, value) do
-		["INCRBYFLOAT", key, value]
+	@spec incr_by_float(String.t, String.t, Keyword.t) :: List.t
+	def incr_by_float(key, value, opts \\ []) do
+		["INCRBYFLOAT", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, value]
 	end
 
 	@doc ""
-	@spec decr(String.t) :: List.t
-	def decr(key) do
-		["DECR", key]
+	@spec decr(String.t, Keyword.t) :: List.t
+	def decr(key, opts \\ []) do
+		["DECR", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec decr_by(String.t, Integer.t) :: List.t
-	def decr_by(key, decrement) do
-		["DECRBY", key, decrement]
+	@spec decr_by(String.t, Integer.t, Keyword.t) :: List.t
+	def decr_by(key, decrement, opts \\ []) do
+		["DECRBY", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, decrement]
 	end
 
 	@doc ""
-	@spec mset(List.t) :: List.t
-	def mset(key_and_values) do
-		["MSET"] ++ key_and_values
+	@spec mset(List.t, Keyword.t) :: List.t
+	def mset(keys_and_values, opts \\ []) do
+		["MSET"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys_and_values, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys_and_values
+		end
 	end
 
 	@doc ""
-	@spec mset_nx(List.t) :: List.t
-	def mset_nx(keys_and_values) do
-		["MSETNX"] ++ keys_and_values
+	@spec mset_nx(List.t, Keyword.t) :: List.t
+	def mset_nx(keys_and_values, opts \\ []) do
+		["MSETNX"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys_and_values, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys_and_values
+		end
 	end
 
 	@doc ""
-	@spec mget(List.t) :: List.t
-	def mget(keys) do
-		["MGET"] ++ keys
+	@spec mget(List.t, Keyword.t) :: List.t
+	def mget(keys, opts \\ []) do
+		["MGET"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 
 	@doc ""
-	@spec del(List.t) :: List.t
-	def del(keys) do
-		["DEL"] ++ keys
+	@spec del(List.t | Map.t | String.t, Keyword.t) :: List.t
+	def del(keys, opts \\ []) do
+		del_q(keys, opts)
+	end
+
+	defp del_q(keys, opts) when is_list(keys) do
+		["DEL"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
+	end 
+
+	defp del_q(key, opts) when not is_list(key) do
+		["DEL", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec lpush(String.t, List.t) :: List.t
-	def lpush(key, values) do
-		["LPUSH", key] ++ values
+	@spec lpush(String.t, List.t, Keyword.t) :: List.t
+	def lpush(key, values, opts \\ []) do
+		["LPUSH", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(values, Keyword.get(opts, :json_opts, []))
+			true ->
+				values
+		end
 	end
 
 	@doc ""
-	@spec rpush(String.t, List.t) :: List.t
-	def rpush(key, values) do
-		["RPUSH", key] ++ values
+	@spec rpush(String.t, List.t, Keyword.t) :: List.t
+	def rpush(key, values, opts \\ []) do
+		["RPUSH", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(values, Keyword.get(opts, :json_opts, []))
+			true ->
+				values
+		end
 	end
 
 	@doc ""
 	@spec lset(String.t, Integer.t, String.t) :: List.t
-	def lset(key, index, value) do
-		["LSET", key, index, value]
+	def lset(key, index, value, opts \\ []) do
+		["LSET", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, index, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec lrange(String.t, Integer.t, Integer.t) :: List.t
-	def lrange(key, start, stop) do
-		["LRANGE", key, start, stop]
+	@spec lrange(String.t | List.t | Map.t, 
+		Integer.t, 
+		Integer.t, 
+		Keyword.t) 
+		:: List.t
+	def lrange(key, start, stop, opts \\ []) do
+		["LRANGE", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, start, stop]
 	end
 
 	@doc ""
-	@spec lrem(String.t, Integer.t, String.t) :: List.t
-	def lrem(key, count, value) do
-		["LREM", key, count, value]
+	@spec lrem(String.t, Integer.t, String.t, Keyword.t) :: List.t
+	def lrem(key, count, value, opts \\ []) do
+		["LREM", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, count, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec sadd(String.t, List.t) :: List.t
-	def sadd(key, values) do
-		["SADD", key] ++ values
+	@spec sadd(String.t | List.t | Map.t, String.t | List.t | Map.t, Keyword.t) 
+		:: List.t
+	def sadd(key, values, opts \\ []) do
+		["SADD", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(values, Keyword.get(opts, :json_opts, []))
+			true ->
+				values
+		end
 	end
 
 	@doc ""
-	@spec scard(String.t) :: List.t
-	def scard(key) do
-		["SCARD", key]
+	@spec scard(String.t | List.t | Map.t, Keyword.t) :: List.t
+	def scard(key, opts \\ []) do
+		["SCARD", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec sdiff(List.t) :: List.t
-	def sdiff(keys) do
-		["SDIFF"] ++ keys
+	@spec sdiff(List.t, Keyword.t) :: List.t
+	def sdiff(keys, opts \\ []) do
+		["SDIFF"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 
 	@doc ""
-	@spec sdiffstore(String.t, List.t) :: List.t
-	def sdiffstore(key, keys) do
-		["SDIFFSTORE", key] ++ keys
+	@spec sdiffstore(String.t | List.t | Map.t, List.t, Keyword.t) :: List.t
+	def sdiffstore(key, keys, opts \\ []) do
+		["SDIFFSTORE", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 
 	@doc ""
-	@spec sinter(List.t) :: List.t
-	def sinter(keys) do
-		["SINTER"] ++ keys
+	@spec sinter(List.t, Keyword.t) :: List.t
+	def sinter(keys, opts \\ []) do
+		["SINTER"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 
 	@doc ""
-	@spec sinterstore(String.t, List.t) :: List.t
-	def sinterstore(key, keys) do
-		["SINTERSTORE", key] ++ keys
+	@spec sinterstore(String.t | Map.t | List.t, List.t, Keyword.t) :: List.t
+	def sinterstore(key, keys, opts \\ []) do
+		["SINTERSTORE", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 
 	@doc ""
-	@spec sismember(String.t, String.t) :: List.t
-	def sismember(key, value) do
-		["SISMEMBER", key, value]
+	@spec sismember(String.t | List.t | Map.t, String.t, Keyword.t) :: List.t
+	def sismember(key, value, opts \\ []) do
+		["SISMEMBER", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_key, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec smembers(String.t) :: List.t
-	def smembers(key) do
-		["SMEMBERS", key]
+	@spec smembers(String.t | List.t | Map.t, Keyword.t) :: List.t
+	def smembers(key, opts \\ []) do
+		["SMEMBERS", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
 	end
 
 	@doc ""
-	@spec smove(String.t, String.t, String.t) :: List.t
-	def smove(key_one, key_two, value) do
-		["SMOVE", key_one, key_two, value]
+	@spec smove(String.t | List.t | Map.t, 
+		String.t | List.t | Map.t, 
+		String.t | List.t | Map.t, 
+		Keyword.t) :: List.t
+	def smove(key_one, key_two, value, opts \\ []) do
+		["SMOVE", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			(Keyword.get(opts, :encode_key, false) == true or
+				Keyword.get(opts, :encode_multiple_keys, false) == true) ->
+				to_jstring(key_one, Keyword.get(opts, :json_opts, []))
+			true ->
+				key_one
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			(Keyword.get(opts, :encode_key_two, false) == true or
+				Keyword.get(opts, :encode_multiple_keys, false) == true) ->
+				to_jstring(key_two, Keyword.get(opts, :json_opts, []))
+			true ->
+				key_two
+		end, cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(value, Keyword.get(opts, :json_opts, []))
+			true ->
+				value
+		end]
 	end
 
 	@doc ""
-	@spec spop(String.t, Integer.t) :: List.t
-	def spop(key, count) do
-		["SPOP", key, count]
+	@spec spop(String.t | List.t | Map.t, Integer.t | nil, Keyword.t) :: List.t
+	def spop(key, count \\ nil, opts \\ []) do
+		if is_nil(count) do
+			["SPOP", cond do
+				Keyword.get(opts, :jsonable, false) == true ->
+					to_jstring(key, Keyword.get(opts, :json_opts, []))
+				true ->
+					key
+			end]
+		else
+			["SPOP", cond do
+				Keyword.get(opts, :jsonable, false) == true ->
+					to_jstring(key, Keyword.get(opts, :json_opts, []))
+				true ->
+					key
+			end, count]
+		end
+	end
+
+	# @doc ""
+	# @spec spop(String.t | List.t | Map.t, Keyword.t) :: List.t
+	# def spop(key, opts \\ []) do
+	# 	["SPOP", cond do
+	# 		Keyword.get(opts, :jsonable, false) == true ->
+	# 			@json_library.encode!(key, Keyword.get(opts, :json_opts, []))
+	# 		true ->
+	# 			key
+	# 	end]
+	# end
+
+	@doc ""
+	@spec srandmember(String.t | List.t | Map.t, Integer.t | nil, Keyword.t) 
+		:: List.t
+	def srandmember(key, count \\ nil, opts \\ []) do
+		srandmember_q(key, count, opts)
+	end
+
+	defp srandmember_q(key, count, opts) when is_nil(count) do
+		["SRANDMEMBER", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end]
+	end
+
+	defp srandmember_q(key, count, opts) do
+		["SRANDMEMBER", cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end, count]
 	end
 
 	@doc ""
-	@spec spop(String.t) :: List.t
-	def spop(key) do
-		["SPOP", key]
+	@spec srem(String.t | List.t | Map.t, 
+		String.t | List.t | Map.t, 
+		Keyword.t) 
+		:: List.t
+	def srem(key, value_or_values, opts \\ []) do
+		["SREM", cond do
+				Keyword.get(opts, :jsonable, false) == true and
+				Keyword.get(opts, :encode_key, false) == true ->
+					to_jstring(key, Keyword.get(opts, :json_opts, []))
+				true ->
+					key
+			end] ++ cond do
+				Keyword.get(opts, :jsonable, false) == true ->
+					to_jstring(value_or_values, Keyword.get(opts, :json_opts, []))
+				true ->
+					value_or_values
+			end
 	end
 
 	@doc ""
-	@spec srandmember(String.t, Integer.t) :: List.t
-	def srandmember(key, count) do
-		["SRANDMEMBER", key, count]
+	@spec sscan(String.t | Integer.t | List.t | Map.t, List.t, Keyword.t) 
+		:: List.t
+	def sscan(key, values, opts \\ []) do
+		["SSCAN", if is_integer(key) do
+			key
+		else
+			cond do
+				Keyword.get(opts, :jsonable, false) == true and
+				Keyword.get(opts, :encode_key, false) == true ->
+					to_jstring(key, Keyword.get(opts, :json_opts, []))
+				true ->
+					key
+			end
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(values, Keyword.get(opts, :json_opts, []))
+			true ->
+				values
+		end
 	end
 
 	@doc ""
-	@spec srandmember(String.t) :: List.t
-	def srandmember(key) do
-		["SRANDMEMBER", key]
+	@spec sunion(List.t, Keyword.t) :: List.t
+	def sunion(keys, opts \\ []) do
+		["SUNION"] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 
 	@doc ""
-	@spec srem(String.t, List.t) :: List.t
-	def srem(key, values) when is_list(values) do
-		["SREM", key] ++ values
-	end
-
-	@doc ""
-	@spec srem(String.t, String.t) :: List.t
-	def srem(key, value) do
-		["SREM", key, value]
-	end
-
-	@doc ""
-	@spec sscan(String.t | Integer.t, List.t) :: List.t
-	def sscan(key, values) do
-		["SSCAN", key] ++ values
-	end
-
-	@doc ""
-	@spec sunion(List.t) :: List.t
-	def sunion(keys) do
-		["SUNION"] ++ keys
-	end
-
-	@doc ""
-	@spec sunionstore(String.t, List.t) :: List.t
-	def sunionstore(key, keys) do
-		["SUNIONSTORE", key] ++ keys
+	@spec sunionstore(String.t | List.t | Map.t, List.t, Keyword.t) :: List.t
+	def sunionstore(key, keys, opts \\ []) do
+		["SUNIONSTORE", cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			(Keyword.get(opts, :encode_key, false) == true or
+				Keyword.get(opts, :encode_multiple_keys, false) == true) ->
+				to_jstring(key, Keyword.get(opts, :json_opts, []))
+			true ->
+				key
+		end] ++ cond do
+			Keyword.get(opts, :jsonable, false) == true and
+			Keyword.get(opts, :encode_multiple_keys, false) == true ->
+				to_jstring(keys, Keyword.get(opts, :json_opts, []))
+			true ->
+				keys
+		end
 	end
 end
