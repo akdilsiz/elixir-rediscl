@@ -90,12 +90,10 @@ import Mix.Rediscl
 alias Rediscl
 
 def run(_) do
+    Mix.Task.run "app.start"
+    
     ### Your codes
-    {:ok, pid} = ensure_started(:rediscl, [])
-
     Rediscl.Query.set("key:1", "value1")
-
-    pid && Rediscl.Superv.stop(pid)
     ### Your codes
 end
 
