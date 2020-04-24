@@ -4,12 +4,18 @@ defmodule Rediscl.MixProject do
   def project do
     [
       app: :rediscl,
-      version: "0.2.9",
+      version: "0.2.10",
       elixir: "~> 1.6",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test, "coveralls.travis": :test,  "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.travis": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       package: package(),
       deps: deps(),
       source_url: "https://github.com/akdilsiz/elixir-rediscl"
@@ -30,7 +36,7 @@ defmodule Rediscl.MixProject do
       maintainers: ["Abdulkadir DILSIZ"],
       licenses: ["MIT"],
       description: "A minimal redis client with connection pooling (using eredis and poolboy)",
-      links:  %{"GitHub" => "https://github.com/akdilsiz/elixir-rediscl"}
+      links: %{"GitHub" => "https://github.com/akdilsiz/elixir-rediscl"}
     ]
   end
 

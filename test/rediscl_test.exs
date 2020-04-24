@@ -3,6 +3,6 @@ defmodule RedisclTest do
   doctest Rediscl
 
   test "start tests" do
-  	assert :ok
+    assert :ok
   end
 end
