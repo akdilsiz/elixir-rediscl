@@ -201,7 +201,359 @@ defmodule Rediscl.Query do
     do: query(Api.sunionstore(key, keys, opts), opts)
 
   @doc """
-    Pipe queries  
+  Adds one or more members to a sorted set, or updates its score, if it already exists.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 1, "value")
+      {:ok, "1"}
+  """
+  def zadd(key, score, value, opts \\ []),
+    do: query(Api.zadd(key, score, value, opts), opts)
+
+  @doc """
+  Gets the number of members in a sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 1, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zcard("key")
+      {:ok, "2"}
+  """
+  def zcard(key, opts \\ []),
+    do: query(Api.zcard(key, opts), opts)
+
+  @doc """
+  Counts the members in a sorted set with scores within the given values.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 1, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 2, "value3")
+      {:ok, "1"}
+      iex> Rediscl.Query.zcount("key", 1, 2)
+      {:ok, "3"}
+  """
+  def zcount(key, min, max, opts \\ []),
+    do: query(Api.zcount(key, min, max, opts), opts)
+
+  @doc """
+  Increments the score of a member in a sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zincrby("key", 5, "value1")
+      {:ok, "6"}
+  """
+  def zincrby(key, increment, value, opts \\ []),
+    do: query(Api.zincrby(key, increment, value, opts), opts)
+
+  @doc """
+  Intersects multiple sorted sets and returns the resulting sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key1", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 2, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zinter(["key1", "key2"])
+      {:ok, ["value1"]}
+  """
+  def zinter(keys, opts \\ []),
+    do: query(Api.zinter(keys, opts), opts)
+
+  @doc """
+  Intersects multiple sorted sets and stores the resulting sorted set in a new key.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key1", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 2, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zinterstore("out", ["key1", "key2"])
+      {:ok, "1"}
+  """
+  def zinterstore(key, keys, opts \\ []),
+    do: query(Api.zinterstore(key, keys, opts), opts)
+
+  @doc """
+  Counts the number of members in a sorted set between a given lexicographical range.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zlexcount("key", "[b", "[c")
+      {:ok, "2"}
+  """
+  def zlexcount(key, min, max, opts \\ []),
+    do: query(Api.zlexcount(key, min, max, opts), opts)
+
+  @doc """
+  Returns a range of members in a sorted set, by index.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrange("key", 0, -1)
+      {:ok, ["a", "b", "c"]}
+  """
+  def zrange(key, min, max, opts \\ []),
+    do: query(Api.zrange(key, min, max, opts), opts)
+
+  @doc """
+  Returns a range of members in a sorted set, by lexicographical range.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrangebylex("key", "[a", "[c")
+      {:ok, ["a", "b", "c"]}
+  """
+  def zrangebylex(key, min, max, opts \\ []),
+    do: query(Api.zrangebylex(key, min, max, opts), opts)
+
+  @doc """
+  Returns a range of members in a sorted set, by score.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrangebyscore("key", 0, 0)
+      {:ok, ["a", "b", "c"]}
+  """
+  def zrangebyscore(key, min, max, opts \\ []),
+    do: query(Api.zrangebyscore(key, min, max, opts), opts)
+
+  @doc """
+  Determines the index of a member in a sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrank("key", "b")
+      {:ok, "1"}
+  """
+  def zrank(key, value, opts \\ []),
+    do: query(Api.zrank(key, value, opts), opts)
+
+  @doc """
+  Removes one or more members from a sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrem("key", "a")
+      {:ok, "1"}
+  """
+  def zrem(key, value, opts \\ []),
+    do: query(Api.zrem(key, value, opts), opts)
+
+  @doc """
+  Removes all members in a sorted set between the given lexicographical range.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zremrangebylex("key", "[a", "[c")
+      {:ok, "3"}
+  """
+  def zremrangebylex(key, min, max, opts \\ []),
+    do: query(Api.zremrangebylex(key, min, max, opts), opts)
+
+  @doc """
+  Removes all members in a sorted set within the given indexes.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zremrangebyrank("key", 0, 2)
+      {:ok, "3"}
+  """
+  def zremrangebyrank(key, min, max, opts \\ []),
+    do: query(Api.zremrangebyrank(key, min, max, opts), opts)
+
+  @doc """
+  Removes all members in a sorted set within the given scores.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zremrangebyscore("key", 0, 0)
+      {:ok, "3"}
+  """
+  def zremrangebyscore(key, min, max, opts \\ []),
+    do: query(Api.zremrangebyscore(key, min, max, opts), opts)
+
+  @doc """
+  Returns a range of members in a sorted set, by index, with scores ordered from high to low.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrevrange("key", 0, -1)
+      {:ok, ["c", "b", "a"]}
+  """
+  def zrevrange(key, min, max, opts \\ []),
+    do: query(Api.zrevrange(key, min, max, opts), opts)
+
+  @doc """
+  Returns a range of members in a sorted set, by lexicographical range, with lexicographical ranges ordered from high to low.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrevrangebylex("key", "[c", "[a")
+      {:ok, ["c", "b", "a"]}
+  """
+  def zrevrangebylex(key, max, min, opts \\ []),
+    do: query(Api.zrevrangebylex(key, max, min, opts), opts)
+
+  @doc """
+  Returns a range of members in a sorted set, by score, with scores ordered from high to low.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrevrangebyscore("key", 0, 0)
+      {:ok, ["c", "b", "a"]}
+  """
+  def zrevrangebyscore(key, max, min, opts \\ []),
+    do: query(Api.zrevrangebyscore(key, max, min, opts), opts)
+
+  @doc """
+  Determines the index of a member in a sorted set, with scores ordered from high to low.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 0, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "b")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 0, "c")
+      {:ok, "1"}
+      iex> Rediscl.Query.zrevrank("key", "a")
+      {:ok, "2"}
+  """
+  def zrevrank(key, value, opts \\ []),
+    do: query(Api.zrevrank(key, value, opts), opts)
+
+  @doc """
+  Gets the score associated with the given member in a sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 4, "a")
+      {:ok, "1"}
+      iex> Rediscl.Query.zscore("key", "a")
+      {:ok, "4"}
+  """
+  def zscore(key, value, opts \\ []),
+    do: query(Api.zscore(key, value, opts), opts)
+
+  @doc """
+  Adds multiple sorted sets and returns the resulting sorted set.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key1", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 2, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zunion(["key1", "key2"])
+      {:ok, ["value1", "value2"]}
+  """
+  def zunion(keys, opts \\ []),
+    do: query(Api.zunion(keys, opts), opts)
+
+  @doc """
+  Adds multiple sorted sets and stores the resulting sorted set in a new key.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key1", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key2", 2, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zunionstore("out", ["key1", "key2"])
+      {:ok, "2"}
+  """
+  def zunionstore(key, keys, opts \\ []),
+    do: query(Api.zunionstore(key, keys, opts), opts)
+
+  @doc """
+  Incrementally iterates sorted sets elements and associated scores.
+
+  ## Examples
+      iex> Rediscl.Query.zadd("key", 1, "value1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 1, "value2")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 1, "oldvalue1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zadd("key", 1, "anohter1")
+      {:ok, "1"}
+      iex> Rediscl.Query.zscan("key, "[0, "match", "anohter*"])
+      {:ok, ["0", ["anohter1", "1"]]}
+  """
+  def zscan(key, values, opts \\ []),
+    do: query(Api.zscan(key, values, opts), opts)
+
+  @doc """
+    Pipe queries
   """
   def pipe(queries) when is_list(queries),
     do: parse_response(Work.query_pipe(queries), :pipe)
