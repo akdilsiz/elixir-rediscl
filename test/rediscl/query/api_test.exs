@@ -199,4 +199,117 @@ defmodule Rediscl.Query.ApiTest do
     assert ["SUNIONSTORE", "key:4", "key:1", "key:3"] ==
              Api.sunionstore("key:4", ["key:1", "key:3"])
   end
+
+  test "zadd/3" do
+    assert ["ZADD", "key:1", 1, "value1"] ==
+             Api.zadd("key:1", 1, "value1")
+  end
+
+  test "zcard/1" do
+    assert ["ZCARD", "key:1"] ==
+             Api.zcard("key:1")
+  end
+
+  test "zcount/3" do
+    assert ["ZCOUNT", "key:1", 1, 2] ==
+             Api.zcount("key:1", 1, 2)
+  end
+
+  test "zincrby/3" do
+    assert ["ZINCRBY", "key:1", 5, "value1"] ==
+             Api.zincrby("key:1", 5, "value1")
+  end
+
+  test "zinter/1" do
+    assert ["ZINTER", 2, "key:1", "key:2"] == Api.zinter(["key:1", "key:2"])
+  end
+
+  test "zinterstore/2" do
+    assert ["ZINTERSTORE", "key:3", 2, "key:1", "key:2"] ==
+             Api.zinterstore("key:3", ["key:1", "key:2"])
+  end
+
+  test "zlexcount/3" do
+    assert ["ZLEXCOUNT", "key:1", "-", "+"] ==
+             Api.zlexcount("key:1", "-", "+")
+  end
+
+  test "zrange/3" do
+    assert ["ZRANGE", "key:1", 0, -1] ==
+             Api.zrange("key:1", 0, -1)
+  end
+
+  test "zrangebylex/3" do
+    assert ["ZRANGEBYLEX", "key:1", "-", "+"] ==
+             Api.zrangebylex("key:1", "-", "+")
+  end
+
+  test "zrangebyscore/3" do
+    assert ["ZRANGEBYSCORE", "key:1", 0, 1] ==
+             Api.zrangebyscore("key:1", 0, 1)
+  end
+
+  test "zrank/3" do
+    assert ["ZRANK", "key:1", "value"] ==
+             Api.zrank("key:1", "value")
+  end
+
+  test "zrem/3" do
+    assert ["ZREM", "key:1", "value"] ==
+             Api.zrem("key:1", "value")
+  end
+
+  test "zremrangebylex/3" do
+    assert ["ZREMRANGEBYLEX", "key:1", "-", "+"] ==
+             Api.zremrangebylex("key:1", "-", "+")
+  end
+
+  test "zremrangebyrank/3" do
+    assert ["ZREMRANGEBYRANK", "key:1", 0, 1] ==
+             Api.zremrangebyrank("key:1", 0, 1)
+  end
+
+  test "zremrangebyscore/3" do
+    assert ["ZREMRANGEBYSCORE", "key:1", 0, 1] ==
+             Api.zremrangebyscore("key:1", 0, 1)
+  end
+
+  test "zrevrange/3" do
+    assert ["ZREVRANGE", "key:1", 0, -1] ==
+             Api.zrevrange("key:1", 0, -1)
+  end
+
+  test "zrevrangebylex/3" do
+    assert ["ZREVRANGEBYLEX", "key:1", "-", "+"] ==
+             Api.zrevrangebylex("key:1", "-", "+")
+  end
+
+  test "zrevrangebyscore/3" do
+    assert ["ZREVRANGEBYSCORE", "key:1", 0, 1] ==
+             Api.zrevrangebyscore("key:1", 0, 1)
+  end
+
+  test "zrevrank/3" do
+    assert ["ZREVRANK", "key:1", "value"] ==
+             Api.zrevrank("key:1", "value")
+  end
+
+  test "zscore/3" do
+    assert ["ZSCORE", "key:1", "value"] ==
+             Api.zscore("key:1", "value")
+  end
+
+  test "zunion/1" do
+    assert ["ZUNION", 2, "key:1", "key:2"] == Api.zunion(["key:1", "key:2"])
+  end
+
+  test "zunionstore/2" do
+    assert ["ZUNIONSTORE", "key:3", 2, "key:1", "key:2"] ==
+             Api.zunionstore("key:3", ["key:1", "key:2"])
+  end
+
+  test "zscan/2" do
+    assert ["ZSCAN", "key:1", 0, "match", "a*"] ==
+             Api.zscan("key:1", [0, "match", "a*"])
+  end
 end

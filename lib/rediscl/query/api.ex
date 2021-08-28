@@ -771,4 +771,448 @@ defmodule Rediscl.Query.Api do
         keys
       end
   end
+
+  @doc """
+    Creates the zadd :eredis query list, based on the given arguments.
+  """
+  @spec zadd(String.t(), Integer.t(), String.t(), Keyword.t()) :: List.t()
+  def zadd(key, score, value, opts \\ []) do
+    [
+      "ZADD",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      score,
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(value, Keyword.get(opts, :json_opts, []))
+      else
+        value
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zcard :eredis query list, based on the given arguments.
+  """
+  @spec zcard(String.t(), Keyword.t()) :: List.t()
+  def zcard(key, opts \\ []) do
+    [
+      "ZCARD",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zcount :eredis query list, based on the given arguments.
+  """
+  @spec zcount(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zcount(key, min, max, opts \\ []) do
+    [
+      "ZCOUNT",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zincrby :eredis query list, based on the given arguments.
+  """
+  @spec zincrby(String.t(), Integer.t(), String.t(), Keyword.t()) :: List.t()
+  def zincrby(key, increment, value, opts \\ []) do
+    [
+      "ZINCRBY",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      increment,
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(value, Keyword.get(opts, :json_opts, []))
+      else
+        value
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zinter :eredis query list, based on the given arguments.
+  """
+  @spec zinter(List.t(), Keyword.t()) :: List.t()
+  def zinter(keys, opts \\ []) do
+    [
+      "ZINTER",
+      length(keys)
+    ] ++
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(keys, Keyword.get(opts, :json_opts, []))
+      else
+        keys
+      end
+  end
+
+  @doc """
+    Creates the zinterstore :eredis query list, based on the given arguments.
+  """
+  @spec zinterstore(String.t() | List.t() | Map.t(), List.t(), Keyword.t()) :: List.t()
+  def zinterstore(key, keys, opts \\ []) do
+    [
+      "ZINTERSTORE",
+      if Keyword.get(opts, :jsonable, false) and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      length(keys)
+    ] ++
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(keys, Keyword.get(opts, :json_opts, []))
+      else
+        keys
+      end
+  end
+
+  @doc """
+    Creates the zlexcount :eredis query list, based on the given arguments.
+  """
+  @spec zlexcount(String.t(), String.t(), String.t(), Keyword.t()) :: List.t()
+  def zlexcount(key, min, max, opts \\ []) do
+    [
+      "ZLEXCOUNT",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zrange :eredis query list, based on the given arguments.
+  """
+  @spec zrange(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zrange(key, min, max, opts \\ []) do
+    [
+      "ZRANGE",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zrangebylex :eredis query list, based on the given arguments.
+  """
+  @spec zrangebylex(String.t(), String.t(), String.t(), Keyword.t()) :: List.t()
+  def zrangebylex(key, min, max, opts \\ []) do
+    [
+      "ZRANGEBYLEX",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zrangebyscore :eredis query list, based on the given arguments.
+  """
+  @spec zrangebyscore(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zrangebyscore(key, min, max, opts \\ []) do
+    [
+      "ZRANGEBYSCORE",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zrank :eredis query list, based on the given arguments.
+  """
+  @spec zrank(String.t(), String.t(), Keyword.t()) :: List.t()
+  def zrank(key, value, opts \\ []) do
+    [
+      "ZRANK",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(value, Keyword.get(opts, :json_opts, []))
+      else
+        value
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zrem :eredis query list, based on the given arguments.
+  """
+  @spec zrem(String.t(), String.t(), Keyword.t()) :: List.t()
+  def zrem(key, value, opts \\ []) do
+    [
+      "ZREM",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(value, Keyword.get(opts, :json_opts, []))
+      else
+        value
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zremrangebylex :eredis query list, based on the given arguments.
+  """
+  @spec zremrangebylex(String.t(), String.t(), String.t(), Keyword.t()) :: List.t()
+  def zremrangebylex(key, min, max, opts \\ []) do
+    [
+      "ZREMRANGEBYLEX",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zremrangebyrank :eredis query list, based on the given arguments.
+  """
+  @spec zremrangebyrank(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zremrangebyrank(key, min, max, opts \\ []) do
+    [
+      "ZREMRANGEBYRANK",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zremrangebyscore :eredis query list, based on the given arguments.
+  """
+  @spec zremrangebyscore(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zremrangebyscore(key, min, max, opts \\ []) do
+    [
+      "ZREMRANGEBYSCORE",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zrevrange :eredis query list, based on the given arguments.
+  """
+  @spec zrevrange(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zrevrange(key, min, max, opts \\ []) do
+    [
+      "ZREVRANGE",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      min,
+      max
+    ]
+  end
+
+  @doc """
+    Creates the zrevrangebylex :eredis query list, based on the given arguments.
+  """
+  @spec zrevrangebylex(String.t(), String.t(), String.t(), Keyword.t()) :: List.t()
+  def zrevrangebylex(key, max, min, opts \\ []) do
+    [
+      "ZREVRANGEBYLEX",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      max,
+      min
+    ]
+  end
+
+  @doc """
+    Creates the zrevrangebyscore :eredis query list, based on the given arguments.
+  """
+  @spec zrevrangebyscore(String.t(), Integer.t(), Integer.t(), Keyword.t()) :: List.t()
+  def zrevrangebyscore(key, max, min, opts \\ []) do
+    [
+      "ZREVRANGEBYSCORE",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      max,
+      min
+    ]
+  end
+
+  @doc """
+    Creates the zrevrank :eredis query list, based on the given arguments.
+  """
+  @spec zrevrank(String.t(), String.t(), Keyword.t()) :: List.t()
+  def zrevrank(key, value, opts \\ []) do
+    [
+      "ZREVRANK",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(value, Keyword.get(opts, :json_opts, []))
+      else
+        value
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zscore :eredis query list, based on the given arguments.
+  """
+  @spec zscore(String.t(), String.t(), Keyword.t()) :: List.t()
+  def zscore(key, value, opts \\ []) do
+    [
+      "ZSCORE",
+      if Keyword.get(opts, :jsonable, false) == true and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(value, Keyword.get(opts, :json_opts, []))
+      else
+        value
+      end
+    ]
+  end
+
+  @doc """
+    Creates the zunion :eredis query list, based on the given arguments.
+  """
+  @spec zunion(List.t(), Keyword.t()) :: List.t()
+  def zunion(keys, opts \\ []) do
+    [
+      "ZUNION",
+      length(keys)
+    ] ++
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(keys, Keyword.get(opts, :json_opts, []))
+      else
+        keys
+      end
+  end
+
+  @doc """
+    Creates the zunionstore :eredis query list, based on the given arguments.
+  """
+  @spec zunionstore(String.t() | List.t() | Map.t(), List.t(), Keyword.t()) :: List.t()
+  def zunionstore(key, keys, opts \\ []) do
+    [
+      "ZUNIONSTORE",
+      if Keyword.get(opts, :jsonable, false) and
+           Keyword.get(opts, :encode_key, false) do
+        to_jstring(key, Keyword.get(opts, :json_opts, []))
+      else
+        key
+      end,
+      length(keys)
+    ] ++
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(keys, Keyword.get(opts, :json_opts, []))
+      else
+        keys
+      end
+  end
+
+  @doc """
+    Creates the zscan :eredis query list, based on the given arguments.
+  """
+  @spec zscan(String.t() | Integer.t() | List.t() | Map.t(), List.t(), Keyword.t()) ::
+          List.t()
+  def zscan(key, values, opts \\ []) do
+    [
+      "ZSCAN",
+      if is_integer(key) do
+        key
+      else
+        if Keyword.get(opts, :jsonable, false) and
+             Keyword.get(opts, :encode_key, false) do
+          to_jstring(key, Keyword.get(opts, :json_opts, []))
+        else
+          key
+        end
+      end
+    ] ++
+      if Keyword.get(opts, :jsonable, false) do
+        to_jstring(values, Keyword.get(opts, :json_opts, []))
+      else
+        values
+      end
+  end
 end
