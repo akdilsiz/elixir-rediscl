@@ -1,9 +1,9 @@
 dist: trusty
 language: elixir
 elixir:
-  - 1.6.0
+  - 1.10.2
 otp_release:
-  - 20.0
+  - 22.0
 services: redis
 sudo: required
 install:

@@ -5,7 +5,7 @@ defmodule Rediscl.MixProject do
     [
       app: :rediscl,
       version: "0.3.0",
-      elixir: "~> 1.6",
+      elixir: "~> 1.10",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
