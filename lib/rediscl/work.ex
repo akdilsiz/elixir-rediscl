@@ -67,6 +67,7 @@ defmodule Rediscl.Work do
       port: @port,
       database: @database,
       password: to_charlist(@password),
-      timeout: @timeout)
+      timeout: @timeout,
+      socket_options: [{:keepalive, true}])
   end
 end
