@@ -63,11 +63,11 @@ defmodule Rediscl.Work do
   end
 
   defp build_conn do
-    :eredis.start_link(host: to_charlist(@host),
+    :eredis.start_link([host: @host,
       port: @port,
       database: @database,
       password: to_charlist(@password),
       timeout: @timeout,
-      socket_options: [{:keepalive, true}])
+      socket_options: [{:keepalive, true}]])
   end
 end
