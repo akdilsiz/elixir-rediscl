@@ -6,7 +6,7 @@ defmodule Rediscl.Work do
   @port Application.get_env(:rediscl, :port, 6379)
   @database Application.get_env(:rediscl, :database, 0)
   @password Application.get_env(:rediscl, :password, "")
-  @reconnnect Application.get_env(:rediscl, :reconnnect, :no_reconnect)
+  # @reconnnect Application.get_env(:rediscl, :reconnnect, :no_reconnect)
   @timeout Application.get_env(:rediscl, :timeout, 15_000)
 
   def start_link(_args) do
@@ -63,6 +63,10 @@ defmodule Rediscl.Work do
   end
 
   defp build_conn do
-    :eredis.start_link(to_charlist(@host), @port, @database, to_charlist(@password), @reconnnect)
+    :eredis.start_link(host: to_charlist(@host),
+      port: @port,
+      database: @database,
+      password: to_charlist(@password),
+      timeout: @timeout)
   end
 end
