@@ -848,6 +848,790 @@ defmodule Rediscl.QueryTest do
     assert Enum.count(values) == 3
   end
 
+  test "zadd/3 with given key and score and value" do
+    assert {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+  end
+
+  test "zadd/3 with given key and score and value and jsonable" do
+    assert {:ok, "1"} =
+             Query.zadd(%{key: :key}, 1, %{value: :value}, [
+               {:jsonable, true},
+               {:encode_key, true}
+             ])
+  end
+
+  test "zcard/1 with given key" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+
+    assert {:ok, "1"} = Query.zcard("key:1")
+  end
+
+  test "zcard/1 with given key and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 1, %{value: :value}, [{:jsonable, true}, {:encode_key, true}])
+
+    assert {:ok, "1"} = Query.zcard(%{key: :key}, [{:jsonable, true}, {:encode_key, true}])
+  end
+
+  test "zcount/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:1", 2, "value2")
+
+    assert {:ok, "2"} = Query.zcount("key:1", 1, 2)
+  end
+
+  test "zcount/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 1, %{value: :value1}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 2, %{value: :value2}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    assert {:ok, "2"} =
+             Query.zcount(%{key: :key}, 1, 2, [
+               {:jsonable, true},
+               {:encode_key, true}
+             ])
+  end
+
+  test "zincrby/3 with given key and increment and value" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    assert {:ok, "6"} = Query.zincrby("key:1", 5, "value1")
+  end
+
+  test "zincrby/3 with given key and increment and value and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 1, %{value: :value}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    assert {:ok, "6"} =
+             Query.zincrby(%{key: :key}, 5, %{value: :value}, [
+               {:jsonable, true},
+               {:encode_key, true}
+             ])
+  end
+
+  test "zinter/1 with given keys" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 2, "value2")
+
+    zinter = Query.zinter(["key:1", "key:2"])
+
+    assert {:ok, ["value1"]} == zinter
+  end
+
+  test "zinter/1 with given keys and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key1}, 1, "value1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 1, "value1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 2, "value2", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zinter =
+      Query.zinter(
+        [%{key: :key1}, %{key: :key2}],
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["value1"]} == zinter
+  end
+
+  test "zinterstore/2 with given keys" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 2, "value2")
+
+    zinterstore = Query.zinterstore("out", ["key:1", "key:2"])
+
+    assert {:ok, "1"} == zinterstore
+  end
+
+  test "zinterstore/2 with given keys and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key1}, 1, %{value: :value1}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 1, %{value: :value1}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 2, %{value: :value2}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zinterstore =
+      Query.zinterstore(
+        %{key: :out},
+        [%{key: :key1}, %{key: :key2}],
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "1"} == zinterstore
+  end
+
+  test "zlexcount/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, "3"} = Query.zlexcount("key:1", "[a", "[c")
+  end
+
+  test "zlexcount/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zlexcount =
+      Query.zlexcount(
+        [%{key: :key}],
+        "[a",
+        "[c",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "3"} == zlexcount
+  end
+
+  test "zrange/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, ["a", "b", "c"]} = Query.zrange("key:1", 0, -1)
+  end
+
+  test "zrange/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrange =
+      Query.zrange(
+        [%{key: :key}],
+        0,
+        -1,
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["a", "b", "c"]} == zrange
+  end
+
+  test "zrangebylex/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, ["a", "b", "c"]} = Query.zrangebylex("key:1", "[a", "[c")
+  end
+
+  test "zrangebylex/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrangebylex =
+      Query.zrangebylex(
+        [%{key: :key}],
+        "[a",
+        "[c",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["a", "b", "c"]} == zrangebylex
+  end
+
+  test "zrangebyscore/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, ["a", "b", "c"]} = Query.zrangebyscore("key:1", 0, 0)
+  end
+
+  test "zrangebyscore/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrangebyscore =
+      Query.zrangebyscore(
+        [%{key: :key}],
+        0,
+        0,
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["a", "b", "c"]} == zrangebyscore
+  end
+
+  test "zrank/3 with given key and value" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, "0"} = Query.zrank("key:1", "a")
+  end
+
+  test "zrank/3 with given key and value and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrank =
+      Query.zrank(
+        [%{key: :key}],
+        "b",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "1"} == zrank
+  end
+
+  test "zrem/3 with given key and value" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+
+    {:ok, "1"} = Query.zrem("key:1", "a")
+  end
+
+  test "zrem/3 with given key and value and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrem =
+      Query.zrem(
+        [%{key: :key}],
+        "a",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "1"} == zrem
+  end
+
+  test "zremrangebylex/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, "3"} = Query.zremrangebylex("key:1", "[a", "[c")
+  end
+
+  test "zremrangebylex/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zremrangebylex =
+      Query.zremrangebylex(
+        [%{key: :key}],
+        "[a",
+        "[c",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "3"} == zremrangebylex
+  end
+
+  test "zremrangebyrank/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, "3"} = Query.zremrangebyrank("key:1", 0, 2)
+  end
+
+  test "zremrangebyrank/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zremrangebyrank =
+      Query.zremrangebyrank(
+        [%{key: :key}],
+        0,
+        2,
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "3"} == zremrangebyrank
+  end
+
+  test "zremrangebyscore/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, "3"} = Query.zremrangebyscore("key:1", 0, 0)
+  end
+
+  test "zremrangebyscore/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zremrangebyscore =
+      Query.zremrangebyscore(
+        [%{key: :key}],
+        0,
+        0,
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "3"} == zremrangebyscore
+  end
+
+  test "zrevrange/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, ["c", "b", "a"]} = Query.zrevrange("key:1", 0, -1)
+  end
+
+  test "zrevrange/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrevrange =
+      Query.zrevrange(
+        [%{key: :key}],
+        0,
+        -1,
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["c", "b", "a"]} == zrevrange
+  end
+
+  test "zrevrangebylex/3 with given key and max and min" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, ["c", "b", "a"]} = Query.zrevrangebylex("key:1", "[c", "[a")
+  end
+
+  test "zrevrangebylex/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrevrangebylex =
+      Query.zrevrangebylex(
+        [%{key: :key}],
+        "[c",
+        "[a",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["c", "b", "a"]} == zrevrangebylex
+  end
+
+  test "zrevrangebyscore/3 with given key and min and max" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, ["c", "b", "a"]} = Query.zrevrangebyscore("key:1", 0, 0)
+  end
+
+  test "zrevrangebyscore/3 with given key and min and max and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrevrangebyscore =
+      Query.zrevrangebyscore(
+        [%{key: :key}],
+        0,
+        0,
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["c", "b", "a"]} == zrevrangebyscore
+  end
+
+  test "zrevrank/3 with given key and value" do
+    {:ok, "1"} = Query.zadd("key:1", 0, "a")
+    {:ok, "1"} = Query.zadd("key:1", 0, "b")
+    {:ok, "1"} = Query.zadd("key:1", 0, "c")
+
+    {:ok, "2"} = Query.zrevrank("key:1", "a")
+  end
+
+  test "zrevrank/3 with given key and value and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "b", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 0, "c", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zrevrank =
+      Query.zrevrank(
+        [%{key: :key}],
+        "a",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "2"} == zrevrank
+  end
+
+  test "zscore/3 with given key and value" do
+    {:ok, "1"} = Query.zadd("key:1", 4, "a")
+
+    {:ok, "4"} = Query.zscore("key:1", "a")
+  end
+
+  test "zscore/3 with given key and value and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key}, 4, "a", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zscore =
+      Query.zscore(
+        [%{key: :key}],
+        "a",
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "4"} == zscore
+  end
+
+  test "zunion/1 with given keys" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 2, "value2")
+
+    zunion = Query.zunion(["key:1", "key:2"])
+
+    assert {:ok, ["value1", "value2"]} == zunion
+  end
+
+  test "zunion/1 with given keys and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key1}, 1, "value1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 1, "value1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 2, "value2", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zunion =
+      Query.zunion(
+        [%{key: :key1}, %{key: :key2}],
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, ["value1", "value2"]} == zunion
+  end
+
+  test "zunionstore/2 with given keys" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:2", 2, "value2")
+
+    zunionstore = Query.zunionstore("out", ["key:1", "key:2"])
+
+    assert {:ok, "2"} == zunionstore
+  end
+
+  test "zunionstore/2 with given keys and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: :key1}, 1, %{value: :value1}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 1, %{value: :value1}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: :key2}, 2, %{value: :value2}, [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    zunionstore =
+      Query.zunionstore(
+        %{key: :out},
+        [%{key: :key1}, %{key: :key2}],
+        [{:jsonable, true}, {:encode_key, true}]
+      )
+
+    assert {:ok, "2"} == zunionstore
+  end
+
+  test "zscan/2 with given key and values" do
+    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("key:1", 1, "value2")
+    {:ok, "1"} = Query.zadd("key:1", 1, "oldvalue1")
+    {:ok, "1"} = Query.zadd("key:1", 1, "anohter1")
+
+    assert {:ok, ["0", ["anohter1", "1"]]} ==
+             Query.zscan("key:1", [0, "match", "anohter*"])
+  end
+
+  test "zscan/2 with given key and values if key is integer" do
+    {:ok, "1"} = Query.zadd(10_000, 1, "value1")
+    {:ok, "1"} = Query.zadd(10_000, 1, "value2")
+    {:ok, "1"} = Query.zadd(10_000, 1, "oldvalue1")
+    {:ok, "1"} = Query.zadd(10_000, 1, "anohter1")
+
+    assert {:ok, ["0", ["anohter1", "1"]]} ==
+             Query.zscan(10_000, [0, "match", "anohter*"])
+  end
+
+  test "zscan/2 with given key and values and jsonable" do
+    {:ok, "1"} =
+      Query.zadd(%{key: 1}, 1, "value1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: 1}, 1, "value2", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: 1}, 1, "oldvalue1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    {:ok, "1"} =
+      Query.zadd(%{key: 1}, 1, "anohter1", [
+        {:jsonable, true},
+        {:encode_key, true}
+      ])
+
+    assert {:ok, ["0", ["anohter1", "1"]]} ==
+             Query.zscan(%{key: 1}, [0, "match", "anohter*"], [
+               {:jsonable, true},
+               {:encode_key, true}
+             ])
+  end
+
   test "pipe/1 with given queries" do
     {:ok, pipe} = Query.pipe([["SET", "a", 1], ["GET", "a"]])
 

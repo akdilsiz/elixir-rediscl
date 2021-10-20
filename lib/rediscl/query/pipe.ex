@@ -42,7 +42,30 @@ defmodule Rediscl.Query.Pipe do
     :srem,
     :sscan,
     :sunion,
-    :sunionstore
+    :sunionstore,
+    :zadd,
+    :zcard,
+    :zcount,
+    :zincrby,
+    :zinter,
+    :zinterstore,
+    :zlexcount,
+    :zrange,
+    :zrangebylex,
+    :zrangebyscore,
+    :zrank,
+    :zrem,
+    :zremrangebylex,
+    :zremrangebyrank,
+    :zremrangebyscore,
+    :zrevrange,
+    :zrevrangebylex,
+    :zrevrangebyscore,
+    :zrevrank,
+    :zscore,
+    :zunion,
+    :zunionstore,
+    :zscan
   ]
 
   @pipes [
@@ -85,7 +108,30 @@ defmodule Rediscl.Query.Pipe do
     :srem,
     :sscan,
     :sunion,
-    :sunionstore
+    :sunionstore,
+    :zadd,
+    :zcard,
+    :zcount,
+    :zincrby,
+    :zinter,
+    :zinterstore,
+    :zlexcount,
+    :zrange,
+    :zrangebylex,
+    :zrangebyscore,
+    :zrank,
+    :zrem,
+    :zremrangebylex,
+    :zremrangebyrank,
+    :zremrangebyscore,
+    :zrevrange,
+    :zrevrangebylex,
+    :zrevrangebyscore,
+    :zrevrank,
+    :zscore,
+    :zunion,
+    :zunionstore,
+    :zscan
   ]
 
   import Rediscl.Query.Api
