@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :rediscl,
-  host: "127.0.0.1",
+  host: "localhost",
   port: 6379,
   password: "",
   database: 0,
