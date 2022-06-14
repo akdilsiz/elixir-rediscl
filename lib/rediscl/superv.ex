@@ -1,5 +1,6 @@
 defmodule Rediscl.Superv do
   @moduledoc false
+  @doc false
   use Supervisor
 
   def start_link(conf) do

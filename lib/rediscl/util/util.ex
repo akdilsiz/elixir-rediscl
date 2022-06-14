@@ -3,7 +3,7 @@ defmodule Rediscl.Query.Util do
   	Rediscl Utilizations
   """
 
-  @json_library Application.get_env(:rediscl, :json_library, Jason)
+  @json_library Application.compile_env(:rediscl, :json_library, Jason)
 
   @doc ""
   @spec to_jstring(Any.t(), Keyword.t()) :: Any.t()

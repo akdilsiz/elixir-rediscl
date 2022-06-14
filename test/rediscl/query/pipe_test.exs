@@ -1,5 +1,5 @@
 defmodule Rediscl.Query.PipeTest do
-  use ExUnit.Case
+  use ExUnit.Case, [async: true]
   doctest Rediscl
 
   import Rediscl.Query.Pipe

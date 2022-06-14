@@ -1,13 +1,13 @@
 defmodule Rediscl.Work do
   @moduledoc false
+  @doc false
   use GenServer
 
-  @host Application.get_env(:rediscl, :host, "127.0.0.1")
-  @port Application.get_env(:rediscl, :port, 6379)
-  @database Application.get_env(:rediscl, :database, 0)
-  @password Application.get_env(:rediscl, :password, "")
-  # @reconnnect Application.get_env(:rediscl, :reconnnect, :no_reconnect)
-  @timeout Application.get_env(:rediscl, :timeout, 15_000)
+  @host Application.compile_env(:rediscl, :host, "127.0.0.1")
+  @port Application.compile_env(:rediscl, :port, 6379)
+  @database Application.compile_env(:rediscl, :database, 0)
+  @password Application.compile_env(:rediscl, :password, "")
+  @timeout Application.compile_env(:rediscl, :timeout, 15_000)
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, [], [])
@@ -23,7 +23,6 @@ defmodule Rediscl.Work do
     end
   end
 
-  @doc false
   def handle_call(%{command: command, params: params}, _from, %{conn: conn}) do
     conn = __MODULE__.ensure(conn)
 
@@ -36,12 +35,10 @@ defmodule Rediscl.Work do
     end
   end
 
-  @doc false
   def ensure(conn) do
     if Process.alive?(conn), do: conn, else: elem(build_conn(), 1)
   end
 
-  @doc false
   def perform(call) do
     :poolboy.transaction(
       Rediscl,
@@ -52,21 +49,20 @@ defmodule Rediscl.Work do
     )
   end
 
-  @doc false
   def query(args) do
     __MODULE__.perform(%{command: :query, params: args})
   end
 
-  @doc false
   def query_pipe(args) do
     __MODULE__.perform(%{command: :query_pipe, params: args})
   end
 
   defp build_conn do
-    :eredis.start_link(host: to_charlist(@host),
+    :eredis.start_link([host: @host,
       port: @port,
       database: @database,
       password: to_charlist(@password),
-      timeout: @timeout)
+      timeout: @timeout,
+      socket_options: [{:keepalive, true}]])
   end
 end

@@ -4,8 +4,6 @@ defmodule Mix.Tasks.Clearrediscldb do
   """
   use Mix.Task
 
-  # import Mix.Rediscl
-
   alias Rediscl
 
   require Logger

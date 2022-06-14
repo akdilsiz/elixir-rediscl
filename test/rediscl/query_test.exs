@@ -1,5 +1,5 @@
 defmodule Rediscl.QueryTest do
-  use ExUnit.Case
+  use ExUnit.Case, [async: true]
   doctest Rediscl
 
   alias Rediscl.Query
@@ -1504,37 +1504,37 @@ defmodule Rediscl.QueryTest do
   end
 
   test "zunion/1 with given keys" do
-    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
-    {:ok, "1"} = Query.zadd("key:2", 1, "value1")
-    {:ok, "1"} = Query.zadd("key:2", 2, "value2")
+    {:ok, "1"} = Query.zadd("keyz:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("keyz:2", 1, "value1")
+    {:ok, "1"} = Query.zadd("keyz:2", 2, "value2")
 
-    zunion = Query.zunion(["key:1", "key:2"])
+    zunion = Query.zunion(["keyz:1", "keyz:2"])
 
     assert {:ok, ["value1", "value2"]} == zunion
   end
 
   test "zunion/1 with given keys and jsonable" do
     {:ok, "1"} =
-      Query.zadd(%{key: :key1}, 1, "value1", [
+      Query.zadd(%{key: :keyzz1}, 1, "value1", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: :key2}, 1, "value1", [
+      Query.zadd(%{key: :keyzz2}, 1, "value1", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: :key2}, 2, "value2", [
+      Query.zadd(%{key: :keyzz2}, 2, "value2", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     zunion =
       Query.zunion(
-        [%{key: :key1}, %{key: :key2}],
+        [%{key: :keyzz1}, %{key: :keyzz2}],
         [{:jsonable, true}, {:encode_key, true}]
       )
 
@@ -1542,30 +1542,30 @@ defmodule Rediscl.QueryTest do
   end
 
   test "zunionstore/2 with given keys" do
-    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
-    {:ok, "1"} = Query.zadd("key:2", 1, "value1")
-    {:ok, "1"} = Query.zadd("key:2", 2, "value2")
+    {:ok, "1"} = Query.zadd("keyzzz:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("keyzzz:2", 1, "value1")
+    {:ok, "1"} = Query.zadd("keyzzz:2", 2, "value2")
 
-    zunionstore = Query.zunionstore("out", ["key:1", "key:2"])
+    zunionstore = Query.zunionstore("out", ["keyzzz:1", "keyzzz:2"])
 
     assert {:ok, "2"} == zunionstore
   end
 
   test "zunionstore/2 with given keys and jsonable" do
     {:ok, "1"} =
-      Query.zadd(%{key: :key1}, 1, %{value: :value1}, [
+      Query.zadd(%{key: :keyy1}, 1, %{value: :value1}, [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: :key2}, 1, %{value: :value1}, [
+      Query.zadd(%{key: :keyy2}, 1, %{value: :value1}, [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: :key2}, 2, %{value: :value2}, [
+      Query.zadd(%{key: :keyy2}, 2, %{value: :value2}, [
         {:jsonable, true},
         {:encode_key, true}
       ])
@@ -1573,7 +1573,7 @@ defmodule Rediscl.QueryTest do
     zunionstore =
       Query.zunionstore(
         %{key: :out},
-        [%{key: :key1}, %{key: :key2}],
+        [%{key: :keyy1}, %{key: :keyy2}],
         [{:jsonable, true}, {:encode_key, true}]
       )
 
@@ -1581,13 +1581,13 @@ defmodule Rediscl.QueryTest do
   end
 
   test "zscan/2 with given key and values" do
-    {:ok, "1"} = Query.zadd("key:1", 1, "value1")
-    {:ok, "1"} = Query.zadd("key:1", 1, "value2")
-    {:ok, "1"} = Query.zadd("key:1", 1, "oldvalue1")
-    {:ok, "1"} = Query.zadd("key:1", 1, "anohter1")
+    {:ok, "1"} = Query.zadd("keysc:1", 1, "value1")
+    {:ok, "1"} = Query.zadd("keysc:1", 1, "value2")
+    {:ok, "1"} = Query.zadd("keysc:1", 1, "oldvalue1")
+    {:ok, "1"} = Query.zadd("keysc:1", 1, "anohter1")
 
     assert {:ok, ["0", ["anohter1", "1"]]} ==
-             Query.zscan("key:1", [0, "match", "anohter*"])
+             Query.zscan("keysc:1", [0, "match", "anohter*"])
   end
 
   test "zscan/2 with given key and values if key is integer" do
@@ -1602,31 +1602,31 @@ defmodule Rediscl.QueryTest do
 
   test "zscan/2 with given key and values and jsonable" do
     {:ok, "1"} =
-      Query.zadd(%{key: 1}, 1, "value1", [
+      Query.zadd(%{key: 123}, 1, "value1", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: 1}, 1, "value2", [
+      Query.zadd(%{key: 123}, 1, "value2", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: 1}, 1, "oldvalue1", [
+      Query.zadd(%{key: 123}, 1, "oldvalue1", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     {:ok, "1"} =
-      Query.zadd(%{key: 1}, 1, "anohter1", [
+      Query.zadd(%{key: 123}, 1, "anohter1", [
         {:jsonable, true},
         {:encode_key, true}
       ])
 
     assert {:ok, ["0", ["anohter1", "1"]]} ==
-             Query.zscan(%{key: 1}, [0, "match", "anohter*"], [
+             Query.zscan(%{key: 123}, [0, "match", "anohter*"], [
                {:jsonable, true},
                {:encode_key, true}
              ])
