@@ -9,7 +9,7 @@ jobs:
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
-      - run: MIX_ENV=test deps.compile
+      - run: MIX_ENV=test mix deps.compile
       - run: mix test
       - run: mix coveralls.circleci
       - run: bash <(curl -s https://codecov.io/bash)
