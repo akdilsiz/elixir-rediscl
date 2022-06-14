@@ -35,7 +35,7 @@ defmodule Rediscl.MixProject do
       files: ["lib", "mix.exs", "README*", ".formatter.exs", "LICENSE*"],
       maintainers: ["Abdulkadir DILSIZ"],
       licenses: ["MIT"],
-      description: "A minimal redis client with connection pooling (using eredis and poolboy)",
+      description: "A minimal redis client with connection pooling",
       links: %{"GitHub" => "https://github.com/akdilsiz/elixir-rediscl"}
     ]
   end
