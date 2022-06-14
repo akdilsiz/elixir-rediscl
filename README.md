@@ -3,8 +3,8 @@
 A minimal redis client with connection pooling (using eredis and poolboy)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/58e142f2a26c45528daad73ad3aa03d6)](https://app.codacy.com/app/akdilsiz/elixir-rediscl?utm_source=github.com&utm_medium=referral&utm_content=akdilsiz/elixir-rediscl&utm_campaign=Badge_Grade_Dashboard)
-[![Build Status](https://travis-ci.org/akdilsiz/elixir-rediscl.svg?branch=master)](https://travis-ci.org/akdilsiz/elixir-rediscl)
-[![Coverage Status](https://coveralls.io/repos/github/akdilsiz/elixir-rediscl/badge.svg?branch=master)](https://coveralls.io/github/akdilsiz/elixir-rediscl?branch=master)
+[![CircleCI](https://circleci.com/gh/akdilsiz/elixir-rediscl/tree/master.svg?style=svg)](https://circleci.com/gh/akdilsiz/elixir-rediscl/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/akdilsiz/elixir-rediscl/badge.svg)](https://coveralls.io/github/akdilsiz/elixir-rediscl)
 [![Hex.pm](https://img.shields.io/hexpm/v/rediscl.svg)](https://hex.pm/packages/rediscl)
 [![Hex.pm](https://img.shields.io/hexpm/dt/rediscl.svg)](https://hex.pm/packages/rediscl)
 
