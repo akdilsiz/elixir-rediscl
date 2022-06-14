@@ -11,7 +11,7 @@ defmodule Rediscl.MixProject do
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
-        "coveralls.circleci": :test,
+        "coveralls.circle": :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
