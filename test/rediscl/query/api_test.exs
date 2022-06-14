@@ -1,5 +1,5 @@
 defmodule Rediscl.Query.ApiTest do
-  use ExUnit.Case
+  use ExUnit.Case, [async: true]
   doctest Rediscl
 
   alias Rediscl.Query.Api

@@ -3,8 +3,8 @@ defmodule Rediscl do
   use Application
   alias Rediscl.Superv
 
-  @pool_size Application.get_env(:rediscl, :pool, 15)
-  @pool_max_overflow Application.get_env(:rediscl, :pool_max_overflow, 2)
+  @pool_size Application.compile_env(:rediscl, :pool, 15)
+  @pool_max_overflow Application.compile_env(:rediscl, :pool_max_overflow, 2)
 
   def start(_type, _args) do
     Superv.start_link(

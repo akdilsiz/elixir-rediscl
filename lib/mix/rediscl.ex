@@ -1,8 +1,8 @@
 defmodule Mix.Rediscl do
   @moduledoc false
+  @doc false
   alias Rediscl.Superv
 
-  @doc false
   @spec ensure_started(module, Keyword.t()) :: {:ok, pid} | no_return
   def ensure_started(client, opts) do
     IO.warn("`Mix.Rediscl.ensure_started/2` deprecated", Macro.Env.stacktrace(__ENV__))
